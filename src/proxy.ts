@@ -9,7 +9,7 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  return NextResponse.redirect(new URL("/logIn"));
+  return NextResponse.redirect(new URL("/logIn","http://localhost:3000/logIn"));
 }
 
 export const config = {
