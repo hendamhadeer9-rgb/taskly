@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function projectsEmptyState() {
+export default function MemberListTable() {
   return (
     <div>
       

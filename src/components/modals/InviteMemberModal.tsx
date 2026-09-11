@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function projectsErrorState() {
+export default function InviteMemberModal() {
   return (
     <div>
       

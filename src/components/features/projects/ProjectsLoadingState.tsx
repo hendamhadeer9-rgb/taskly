@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function projectsLoadingState() {
+export default function ProjectsLoadingState() {
   return (
     <div>
       

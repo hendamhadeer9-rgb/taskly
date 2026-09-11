@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function projectEpicLoading() {
+export default function EpicsEmptyState() {
   return (
     <div>
       

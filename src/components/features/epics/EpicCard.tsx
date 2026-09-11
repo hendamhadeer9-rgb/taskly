@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function projectMembersListLoading() {
+export default function EpicCard() {
   return (
     <div>
       

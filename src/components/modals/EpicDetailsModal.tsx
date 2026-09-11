@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function acceptInvitation() {
+export default function EpicDetailsModal() {
   return (
     <div>
       
