@@ -11,10 +11,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerAction } from "./Register.Acstions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import Icon from "@/components/ui/Icon";
 
 export type RegisterFormValues = zod.infer<typeof registerSchema>;
 
 export default function RegisterForm() {
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const route = useRouter();
   const {
     register,
@@ -94,33 +98,61 @@ export default function RegisterForm() {
               {...register("jobTitle")}
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="relative">
-                <Input
-                  type="password"
-                  label="PASSWORD"
-                  placeholder="Password"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <p className="text-xs text-error mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
+           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  {/* حقل كلمة السر */}
+  <div className="flex flex-col relative">
+    <Input
+      type={showPassword ? "text" : "password"}
+      label="PASSWORD"
+      placeholder="Password"
+      className="pr-10"
+      {...register("password")}
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-3 bottom-1 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
+    >
+      <Icon
+        name={showPassword ? "visibility_off" : "visibility"}
+        width={20}
+        height={20}
+      />
+    </button>
+    {errors.password && (
+      <p className="text-xs text-error mt-1">
+        {errors.password.message}
+      </p>
+    )}
+  </div>
 
-              <Input
-                type="password"
-                label="CONFIRM PASSWORD"
-                placeholder="Repeat your password"
-                {...register("confirmPassword")}
-              />
-              {errors.confirmPassword && (
-                <p className="text-xs text-error mt-1">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
+  {/* حقل تأكيد كلمة السر */}
+  <div className="flex flex-col relative">
+    <Input
+      type={showConfirmPassword ? "text" : "password"}
+      label="CONFIRM PASSWORD"
+      placeholder="Repeat your password"
+      className="pr-10"
+      {...register("confirmPassword")}
+    />
+    <button
+      type="button"
+      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+      className="absolute right-3 bottom-1 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
+    >
+      <Icon
+        name={showConfirmPassword ? "visibility_off" : "visibility"}
+        width={20}
+        height={20}
+      />
+    </button>
+    {errors.confirmPassword && (
+      <p className="text-xs text-error mt-1">
+        {errors.confirmPassword.message}
+      </p>
+    )}
+  </div>
+</div>
 
             <Button type="submit" className="w-full mt-2 bg-Primary-Gradient">
               Create Account

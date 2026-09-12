@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/Input";
 import { Typography } from "@/components/ui/Typography";
 import { loginSchema } from "./logIn.Schema";
 import { logInAction } from "./logIn.Actions";
+import Icon from "@/components/ui/Icon";
 
 export type LoginFormValues = zod.infer<typeof loginSchema>;
 
@@ -119,6 +120,7 @@ export default function LoginForm() {
                   {...register("rememberMe")}
                   className="rounded border-neutral-border text-primary focus:ring-primary h-4 w-4"
                 />
+              
                 <span>Remember Me</span>
               </label>
 
