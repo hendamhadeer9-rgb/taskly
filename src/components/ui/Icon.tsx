@@ -13,7 +13,8 @@ export type IconName =
   | "hub"
   | "rocket"
   | "architecture"
-  | "visibility";
+  | "visibility"
+  | "dataset";
 
 interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
   name: IconName | string;
@@ -26,9 +27,9 @@ interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
 
 export default function Icon({
   name,
-  width = 16, 
+  width = 16,
   height = 20,
-  color = "#003D9B", 
+  color = "#003D9B",
   className = "",
   filled = false,
   ...props
@@ -39,7 +40,7 @@ export default function Icon({
       style={{
         width: `${width}px`,
         height: `${height}px`,
-        fontSize: `${height}px`, 
+        fontSize: `${height}px`,
         color: color,
         fontVariationSettings: filled ? "'FILL' 1" : "'FILL' 0",
       }}

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -13,11 +14,14 @@ import { Typography } from "@/components/ui/Typography";
 import { loginSchema } from "./logIn.Schema";
 import { logInAction } from "./logIn.Actions";
 import Icon from "@/components/ui/Icon";
+import Image from "next/image";
 
 export type LoginFormValues = zod.infer<typeof loginSchema>;
 
 export default function LoginForm() {
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -44,15 +48,11 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen w-full bg-background flex flex-col justify-between p-4 sm:p-8">
-      <header className="w-full max-w-7xl mx-auto flex items-center justify-start py-2">
-        <div className="flex items-center gap-2 text-primary">
-          <Typography
-            variant="title-md"
-            className="font-extrabold tracking-wider text-primary"
-          >
-            TASKLY
-          </Typography>
-        </div>
+      <header className="w-full max-w-7xl mx-auto flex items-center justify-start py-2 gap-2">
+        <Image src="/icon.svg" alt="logo" width={16} height={20} />
+        <Typography variant="title-md" className="font-bold">
+          TASKLY
+        </Typography>
       </header>
 
       <main className="flex-1 flex items-center justify-center py-6 sm:py-10">
@@ -73,6 +73,7 @@ export default function LoginForm() {
           </div>
 
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+            {/* حقل البريد الإلكتروني */}
             <div>
               <Input
                 type="email"
@@ -87,7 +88,8 @@ export default function LoginForm() {
               )}
             </div>
 
-            <div>
+            {/* حقل كلمة السر */}
+            <div className="flex flex-col">
               <div className="flex items-center justify-between mb-1 sm:hidden">
                 <label className="text-[10px] font-semibold tracking-wider text-neutral-dark uppercase">
                   Password
@@ -100,12 +102,27 @@ export default function LoginForm() {
                 </Link>
               </div>
 
-              <Input
-                type="password"
-                label="PASSWORD"
-                placeholder="Enter your password"
-                {...register("password")}
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  label="PASSWORD"
+                  placeholder="Enter your password"
+                  className="pr-10"
+                  {...register("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-8 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
+                >
+                  <Icon
+                    name={showPassword ? "visibility_off" : "visibility"}
+                    width={20}
+                    height={20}
+                  />
+                </button>
+              </div>
+
               {errors.password && (
                 <p className="text-xs text-error mt-1">
                   {errors.password.message}
@@ -113,6 +130,7 @@ export default function LoginForm() {
               )}
             </div>
 
+            {/* خيارات Remember Me و Forgot Password */}
             <div className="flex items-center justify-between text-xs pt-1">
               <label className="flex items-center gap-2 cursor-pointer text-neutral-dark font-medium">
                 <input
@@ -120,7 +138,6 @@ export default function LoginForm() {
                   {...register("rememberMe")}
                   className="rounded border-neutral-border text-primary focus:ring-primary h-4 w-4"
                 />
-              
                 <span>Remember Me</span>
               </label>
 
@@ -132,6 +149,7 @@ export default function LoginForm() {
               </Link>
             </div>
 
+            {/* زر تسجيل الدخول */}
             <Button
               type="submit"
               disabled={isSubmitting}
@@ -141,12 +159,13 @@ export default function LoginForm() {
             </Button>
           </form>
 
+          {/* رابط إنشاء حساب جديد */}
           <div className="text-center pt-2">
             <Typography
               variant="body-md"
               className="text-xs text-neutral-muted"
             >
-              Do not have an account?
+              Do not have an account?{" "}
               <Link
                 href="/Register"
                 className="text-primary font-bold hover:underline"

@@ -25,13 +25,15 @@ export async function logInAction(data: LoginFormValues) {
 
     const finalRes = await res.json();
 
-
     if (res.ok && finalRes.access_token) {
       const cookieStore = await cookies();
+
       cookieStore.set("token", finalRes.access_token, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
         path: "/",
-        maxAge: 60 * 60 * 24 * 7,
+        ...(data.rememberMe ? { maxAge: 60 * 60 * 24 * 30 } : {}),
       });
 
       return { ok: true, data: finalRes };
@@ -39,6 +41,6 @@ export async function logInAction(data: LoginFormValues) {
 
     return { ok: false };
   } catch (error) {
-    return { ok: false , error};
+    return { ok: false, error };
   }
 }

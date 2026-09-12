@@ -13,12 +13,13 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Icon from "@/components/ui/Icon";
+import Image from "next/image";
 
 export type RegisterFormValues = zod.infer<typeof registerSchema>;
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
-const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const route = useRouter();
   const {
     register,
@@ -46,8 +47,13 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   };
 
   return (
-    <div className="min-h-screen w-full bg-background flex flex-col justify-between p-4 sm:p-8">
-      <header className="w-full max-w-7xl mx-auto flex items-center justify-start py-2"></header>
+    <div className="min-h-screen w-full bg-Surface-Low flex flex-col justify-between p-4 sm:p-8">
+      <header className="w-full max-w-7xl mx-auto flex items-center justify-start py-2 gap-2">
+        <Image src="/icon.svg" alt="logo" width={16} height={20} />
+        <Typography variant="title-md" className="font-bold">
+          TASKLY
+        </Typography>
+      </header>
 
       <main className="flex-1 flex items-center justify-center py-6 sm:py-10">
         <div className="w-full max-w-xl bg-white rounded-lg sm:shadow-card sm:border sm:border-neutral-border/20 p-6 sm:p-12 space-y-6">
@@ -98,61 +104,65 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
               {...register("jobTitle")}
             />
 
-           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-  {/* حقل كلمة السر */}
-  <div className="flex flex-col relative">
-    <Input
-      type={showPassword ? "text" : "password"}
-      label="PASSWORD"
-      placeholder="Password"
-      className="pr-10"
-      {...register("password")}
-    />
-    <button
-      type="button"
-      onClick={() => setShowPassword(!showPassword)}
-      className="absolute right-3 bottom-1 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
-    >
-      <Icon
-        name={showPassword ? "visibility_off" : "visibility"}
-        width={20}
-        height={20}
-      />
-    </button>
-    {errors.password && (
-      <p className="text-xs text-error mt-1">
-        {errors.password.message}
-      </p>
-    )}
-  </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col">
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    label="PASSWORD"
+                    placeholder="Password"
+                    className="pr-10"
+                    {...register("password")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-8 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
+                  >
+                    <Icon
+                      name={showPassword ? "visibility_off" : "visibility"}
+                      width={20}
+                      height={20}
+                    />
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-xs text-error mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
 
-  {/* حقل تأكيد كلمة السر */}
-  <div className="flex flex-col relative">
-    <Input
-      type={showConfirmPassword ? "text" : "password"}
-      label="CONFIRM PASSWORD"
-      placeholder="Repeat your password"
-      className="pr-10"
-      {...register("confirmPassword")}
-    />
-    <button
-      type="button"
-      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-      className="absolute right-3 bottom-1 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
-    >
-      <Icon
-        name={showConfirmPassword ? "visibility_off" : "visibility"}
-        width={20}
-        height={20}
-      />
-    </button>
-    {errors.confirmPassword && (
-      <p className="text-xs text-error mt-1">
-        {errors.confirmPassword.message}
-      </p>
-    )}
-  </div>
-</div>
+              <div className="flex flex-col">
+                <div className="relative">
+                  <Input
+                    type={showConfirmPassword ? "text" : "password"}
+                    label="CONFIRM PASSWORD"
+                    placeholder="Repeat your password"
+                    className="pr-10"
+                    {...register("confirmPassword")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-8 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
+                  >
+                    <Icon
+                      name={
+                        showConfirmPassword ? "visibility_off" : "visibility"
+                      }
+                      width={20}
+                      height={20}
+                    />
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p className="text-xs text-error mt-1">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
+            </div>
 
             <Button type="submit" className="w-full mt-2 bg-Primary-Gradient">
               Create Account

@@ -15,11 +15,11 @@ interface TypographyProps {
 }
 
 const variantStyles: Record<TypographyVariant, string> = {
-  "display-lg": "text-display-lg font-bold tracking-[-2.8px] text-neutral-dark",
-  "headline-lg": "text-headline-lg font-semibold tracking-normal text-neutral-dark",
-  "title-md": "text-title-md font-medium tracking-normal text-neutral-dark",
-  "body-md": "text-body-md font-normal tracking-normal text-neutral-muted",
-  "label-sm": "text-label-sm font-bold tracking-[1.1px] uppercase text-neutral-dark",
+  "display-lg": "text-[56px] leading-[56px] font-bold text-neutral-dark",
+  "headline-lg": "text-[32px] leading-[40px] font-semibold text-neutral-dark",
+  "title-md": "text-[18px] leading-[27px] font-medium text-neutral-dark",
+  "body-md": "text-[14px] leading-[22.75px] font-normal text-neutral-muted",
+  "label-sm": "text-[11px] leading-[16.5px] font-bold uppercase text-neutral-dark",
 };
 
 export function Typography({ variant, children, className }: TypographyProps) {
