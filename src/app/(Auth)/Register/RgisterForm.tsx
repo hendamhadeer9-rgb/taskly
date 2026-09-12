@@ -24,6 +24,7 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -35,6 +36,30 @@ export default function RegisterForm() {
       confirmPassword: "",
     },
   });
+
+  const passwordValue = watch("password", "");
+
+  // الشروط الثلاثة للباسورد
+  const rules = [
+    {
+      id: 1,
+      label: "At least 8 characters",
+      isMet: passwordValue.length >= 8,
+    },
+    {
+      id: 2,
+      label: "One uppercase, lowercase, and digit",
+      isMet:
+        /[A-Z]/.test(passwordValue) &&
+        /[a-z]/.test(passwordValue) &&
+        /[0-9]/.test(passwordValue),
+    },
+    {
+      id: 3,
+      label: "One special character",
+      isMet: /[^A-Za-z0-9]/.test(passwordValue),
+    },
+  ];
 
   const onSubmit = async (data: RegisterFormValues) => {
     const isRegistered = await registerAction(data);
@@ -164,6 +189,26 @@ export default function RegisterForm() {
               </div>
             </div>
 
+            {/* بوكس الشروط المعطاة في تصميم الفيجما */}
+            <div className="p-4 rounded-lg bg-[#E8EDFF] space-y-2">
+              {rules.map((rule) => (
+                <div key={rule.id} className="flex items-center gap-2">
+                  <Icon
+                    name={rule.isMet ? "check_circle " : "radio_button_unchecked"}
+                    width={16}
+                    height={16}
+                    className={rule.isMet ? "text-success" : "text-neutral-muted"}
+                  />
+                  <Typography
+                    variant="label-sm"
+                    className=" text-neutral-muted"
+                  >
+                    {rule.label}
+                  </Typography>
+                </div>
+              ))}
+            </div>
+
             <Button type="submit" className="w-full mt-2 bg-Primary-Gradient">
               Create Account
             </Button>
@@ -174,7 +219,7 @@ export default function RegisterForm() {
               variant="body-md"
               className="text-xs text-neutral-muted"
             >
-              Already have an account?
+              Already have an account?{" "}
               <Link
                 href="/logIn"
                 className="text-primary font-bold hover:underline"

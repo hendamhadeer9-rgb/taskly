@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 export async function logInAction(data: LoginFormValues) {
   try {
     const res = await fetch(
-      `https://yubvtliweecqbmsqmlrr.supabase.co/auth/v1/token?grant_type=password`,
+      `${process.env.BASE_URL}/auth/v1/token?grant_type=password`,
       {
         method: "POST",
         headers: {
