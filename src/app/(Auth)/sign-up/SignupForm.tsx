@@ -6,9 +6,9 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Typography } from "@/components/ui/Typography";
-import { registerSchema } from "./Register.schema";
+import { registerSchema } from "./signup.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerAction } from "./Register.Acstions";
+import { registerAction } from "./signup.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -17,7 +17,7 @@ import Image from "next/image";
 
 export type RegisterFormValues = zod.infer<typeof registerSchema>;
 
-export default function RegisterForm() {
+export default function signupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const route = useRouter();

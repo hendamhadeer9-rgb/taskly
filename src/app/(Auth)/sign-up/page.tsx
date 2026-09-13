@@ -1,10 +1,9 @@
-
-import RegisterForm from "./RgisterForm";
+import SignupForm from "./SignupForm.tsx";
 
 export default function page() {
   return (
     <div>
-      <RegisterForm />
+      <SignupForm />
     </div>
   );
 }
