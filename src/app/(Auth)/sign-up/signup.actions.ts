@@ -3,25 +3,42 @@
 import { RegisterFormValues } from "./SignupForm";
 
 export async function registerAction(data: RegisterFormValues) {
+  const baseUrl =
+    process.env.BASE_URL || "https://yubvtliweecqbmsqmlrr.supabase.co";
+  const apiKey =
+    process.env.API_KEY || "sb_publishable_oFcILbgYv5m9OURLvPGRqw_dAPaH8-P";
+
   try {
-    const res = await fetch(`${process.env.BASE_URL}/auth/v1/signup`, {
-      method: "post",
+    const res = await fetch(`${baseUrl}/auth/v1/signup`, {
+      method: "POST",
       body: JSON.stringify({
         email: data.email,
         password: data.password,
-        data:{
+        data: {
           name: data.name,
           job_title: data.jobTitle,
-        }
+        },
       }),
       headers: {
         "content-type": "application/json",
-        apikey: process.env.API_KEY!,
+        apikey: apiKey,
       },
     });
 
-    return res.ok;
+    const finalRes = await res.json();
+
+    if (res.ok) {
+      return { ok: true, data: finalRes };
+    }
+
+    return {
+      ok: false,
+      error: finalRes.msg || finalRes.error_description || "Signup failed",
+    };
   } catch (error) {
-    return error;
+    return {
+      ok: false,
+      error,
+    };
   }
 }

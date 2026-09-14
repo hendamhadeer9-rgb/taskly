@@ -14,7 +14,16 @@ export type IconName =
   | "rocket"
   | "architecture"
   | "visibility"
-  | "dataset";
+  | "dataset"
+  | "menu"
+  | "Folder"
+  | "Group"
+  | "Info"
+  | "Checklist"
+  | "Flowchart"
+  | "Equalizer"
+  | "north"
+  | "south";
 
 interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
   name: IconName | string;

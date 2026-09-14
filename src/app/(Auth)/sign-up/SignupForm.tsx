@@ -11,13 +11,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerAction } from "./signup.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import Icon from "@/components/ui/Icon";
 import Image from "next/image";
 
 export type RegisterFormValues = zod.infer<typeof registerSchema>;
 
-export default function signupForm() {
+export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const route = useRouter();
@@ -39,7 +39,6 @@ export default function signupForm() {
 
   const passwordValue = watch("password", "");
 
-  // الشروط الثلاثة للباسورد
   const rules = [
     {
       id: 1,
@@ -194,10 +193,14 @@ export default function signupForm() {
               {rules.map((rule) => (
                 <div key={rule.id} className="flex items-center gap-2">
                   <Icon
-                    name={rule.isMet ? "check_circle " : "radio_button_unchecked"}
+                    name={
+                      rule.isMet ? "check_circle " : "radio_button_unchecked"
+                    }
                     width={16}
                     height={16}
-                    className={rule.isMet ? "text-success" : "text-neutral-muted"}
+                    className={
+                      rule.isMet ? "text-success" : "text-neutral-muted"
+                    }
                   />
                   <Typography
                     variant="label-sm"

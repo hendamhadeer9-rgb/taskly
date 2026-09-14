@@ -39,8 +39,9 @@ export default function LoginForm() {
     const response = (await logInAction(data)) as { ok: boolean };
     if (response?.ok) {
       toast.success("Logged in successfully");
-      router.refresh();
       router.push("/");
+      router.refresh();
+      
     } else {
       toast.error("Failed to log in");
     }
