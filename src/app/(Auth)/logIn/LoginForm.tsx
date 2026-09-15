@@ -39,9 +39,8 @@ export default function LoginForm() {
     const response = (await logInAction(data)) as { ok: boolean };
     if (response?.ok) {
       toast.success("Logged in successfully");
-      router.push("/");
+      router.push("/projects");
       router.refresh();
-      
     } else {
       toast.error("Failed to log in");
     }
@@ -50,7 +49,7 @@ export default function LoginForm() {
   return (
     <div className="min-h-screen w-full bg-background flex flex-col justify-between p-4 sm:p-8">
       <header className="w-full max-w-7xl mx-auto flex items-center justify-start py-2 gap-2">
-        <Image src="/icon.svg" alt="logo" width={16} height={20} />
+        <Image src="/Icon.svg" alt="logo" width={16} height={20} />
         <Typography variant="title-md" className="font-bold">
           TASKLY
         </Typography>

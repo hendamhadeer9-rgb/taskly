@@ -33,7 +33,6 @@ export async function registerAction(data: RegisterFormValues) {
 
     return {
       ok: false,
-      error: finalRes.msg || finalRes.error_description || "Signup failed",
     };
   } catch (error) {
     return {

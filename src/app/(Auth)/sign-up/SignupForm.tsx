@@ -73,7 +73,7 @@ export default function SignupForm() {
   return (
     <div className="min-h-screen w-full bg-Surface-Low flex flex-col justify-between p-4 sm:p-8">
       <header className="w-full max-w-7xl mx-auto flex items-center justify-start py-2 gap-2">
-        <Image src="/icon.svg" alt="logo" width={16} height={20} />
+        <Image src="/Icon.svg" alt="logo" width={16} height={20} />
         <Typography variant="title-md" className="font-bold">
           TASKLY
         </Typography>
@@ -188,8 +188,7 @@ export default function SignupForm() {
               </div>
             </div>
 
-            {/* بوكس الشروط المعطاة في تصميم الفيجما */}
-            <div className="p-4 rounded-lg bg-[#E8EDFF] space-y-2">
+            <div className="p-4 rounded-lg bg-condition-box space-y-2">
               {rules.map((rule) => (
                 <div key={rule.id} className="flex items-center gap-2">
                   <Icon
@@ -199,7 +198,7 @@ export default function SignupForm() {
                     width={16}
                     height={16}
                     className={
-                      rule.isMet ? "text-success" : "text-neutral-muted"
+                      rule.isMet ? "text-success!" : "text-neutral-muted"
                     }
                   />
                   <Typography

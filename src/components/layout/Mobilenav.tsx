@@ -14,7 +14,6 @@ interface NavItem {
 
 export default function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
-  // 1. حالة الـ Tab النشط حالياً (الافتراضي هو projects)
   const [activeTab, setActiveTab] = useState<string>("projects");
 
   const navItems: NavItem[] = [
@@ -51,10 +50,8 @@ export default function MobileNav() {
     : navItems.filter((item) => item.isCenter);
 
   const handleItemClick = (item: NavItem) => {
-    // تحديث الأيقونة النشطة دائماً عند الضغط على أي زر
     setActiveTab(item.id);
 
-    // فتح/إغلاق القائمة عند الضغط على زر Projects
     if (item.isCenter) {
       setIsOpen(!isOpen);
     }
@@ -68,7 +65,6 @@ export default function MobileNav() {
         }`}
       >
         {visibleItems.map((item) => {
-          // 2. التحقق مما إذا كان هذا العنصر هو النشط حالياً
           const isActive = activeTab === item.id;
 
           return (

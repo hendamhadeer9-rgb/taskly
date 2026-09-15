@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Icon from "../../ui/Icon";
 import Image from "next/image";
 import { Typography } from "../../ui/Typography";
+import { logoutAction } from "@/app/(Auth)/logout/logout.action";
+import { toast } from "sonner";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,7 +23,9 @@ export default function Sidebar({
   setIsCollapsed,
 }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isProjectOpen, setIsProjectOpen] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const isProjectsSection = pathname.startsWith("/projects");
 
@@ -36,6 +40,24 @@ export default function Sidebar({
     { label: "Members", icon: "Group", href: "/projects/active/members" },
     { label: "Details", icon: "info", href: "/projects/active/details" },
   ];
+
+  async function handleLogout() {
+    try {
+      setIsLoggingOut(true);
+      onClose();
+      const logout = await logoutAction();
+      if (logout) {
+        router.push("/logIn");
+        router.refresh();
+        toast.success("loged out successfully");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Logout failed, please try again.");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }
 
   return (
     <>
@@ -135,7 +157,6 @@ export default function Sidebar({
                   )}
                 </button>
 
-
                 {isProjectOpen && (
                   <div
                     className={`flex flex-col gap-1 mt-1 ${
@@ -174,7 +195,6 @@ export default function Sidebar({
         </div>
 
         <div className="p-4 border-t border-gray-200 flex flex-col gap-1">
-
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="hidden md:flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-dark "
@@ -198,15 +218,21 @@ export default function Sidebar({
             {!isCollapsed && <span>Collapse</span>}
           </button>
 
-
           <button
-            onClick={() => {
-            }}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-error w-full text-right"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-error w-full text-right"
           >
-            <Icon name="logout" width={20} height={20} className="text-error" />
+            <Icon
+              name="logout"
+              width={20}
+              height={20}
+              className="text-error!"
+            />
 
-            {!isCollapsed && <span>Logout</span>}
+            {!isCollapsed && (
+              <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
+            )}
           </button>
         </div>
       </aside>

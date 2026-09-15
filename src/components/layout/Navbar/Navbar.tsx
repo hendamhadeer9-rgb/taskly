@@ -6,13 +6,12 @@ import { Typography } from "../../ui/Typography";
 import { getUserData } from "@/api/services/servicesApi";
 interface usertype {
   user_metadata: {
- name: string,
-  job_title: string,
-  }
- 
+    name: string;
+    job_title: string;
+  };
 }
 export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
-  const [user, setUser] = useState<usertype |null>(null);
+  const [user, setUser] = useState<usertype | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

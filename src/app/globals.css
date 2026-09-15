@@ -9,6 +9,7 @@
   --Surface-Medium: #dce7fe;
   --Surface-Low: #f1f3ff;
   --Background: #f9f9ff;
+  --condition-box: #e8edff;
 
   --neutral-dark: #041b3c;
   --neutral-muted: #4f5f7b;
@@ -43,6 +44,7 @@
   --color-surface-medium: var(--Surface-Medium);
   --color-surface-low: var(--Surface-Low);
   --color-background: var(--Background);
+  --color-condition-box: var(--condition-box);
 
   --color-neutral-dark: var(--neutral-dark);
   --color-neutral-muted: var(--neutral-muted);
