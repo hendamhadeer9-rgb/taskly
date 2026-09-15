@@ -71,7 +71,7 @@ export default function Sidebar({
           <div className="flex items-center justify-between h-10 px-2">
             {isCollapsed ? (
               <Image
-                src="/icon.svg"
+                src="/Icon.svg"
                 alt="logo"
                 width={20}
                 height={20}
