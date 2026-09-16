@@ -8,7 +8,6 @@ export async function logInAction(data: LoginFormValues) {
     process.env.BASE_URL || "https://yubvtliweecqbmsqmlrr.supabase.co";
   const apiKey =
     process.env.API_KEY || "sb_publishable_oFcILbgYv5m9OURLvPGRqw_dAPaH8-P";
-  
 
   try {
     const res = await fetch(`${baseUrl}/auth/v1/token?grant_type=password`, {

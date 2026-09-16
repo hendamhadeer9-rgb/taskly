@@ -1,5 +1,6 @@
 "use server";
 
+import { ProjectFormData } from "@/app/projects/add/page";
 import { cookies } from "next/headers";
 
 export async function getUserData() {
@@ -34,5 +35,34 @@ export async function getUserData() {
   } catch (error) {
     console.error("Fetch error:", error);
     return null;
+  }
+}
+
+export async function addNewProject(data: ProjectFormData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  const baseUrl =
+    process.env.BASE_URL || "https://yubvtliweecqbmsqmlrr.supabase.co";
+  const apiKey =
+    process.env.API_KEY || "sb_publishable_oFcILbgYv5m9OURLvPGRqw_dAPaH8-P";
+  try {
+    const response = await fetch(`${baseUrl}/rest/v1/projects`, {
+      method: "POST",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: data.title,
+        description: data.description,
+      }),
+    });
+    if (!response.ok) {
+      return false;
+    }
+    return { success: true };
+  } catch (error) {
+    return { success: false };
   }
 }

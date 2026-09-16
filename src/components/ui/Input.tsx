@@ -26,7 +26,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           className={cn(
             "flex h-10 w-full rounded-md bg-surface-highest px-4 py-3.5 text-sm text-neutral-dark focus:outline-none ",
-            error && " bg-[#FFDAD6] text-error",
+            error && " bg-surface-highest text-error",
             className,
           )}
           {...props}
