@@ -12,7 +12,7 @@ import { ProjectsEmptyState } from "@/components/features/projects/ProjectsEmpty
 import { ProjectsErrorState } from "@/components/features/projects/ProjectsErrorState";
 
 export default async function ProjectsList() {
-  const result = await getProjects({ title: "", description: "" });
+  const result = await getProjects();
   if (!result || !result.success) {
     return <ProjectsErrorState />;
   }
