@@ -60,8 +60,8 @@ export async function addNewProject(data: ProjectFormData) {
       }),
     });
     if (response.ok) {
-      revalidatePath("/project");
-
+     revalidatePath("/project");
+      
       return { success: true };
     }
     return { success: false };
@@ -70,7 +70,8 @@ export async function addNewProject(data: ProjectFormData) {
   }
 }
 
-export async function getProjects(data: ProjectFormData) {
+
+export async function getProjects() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   const baseUrl =
@@ -86,15 +87,17 @@ export async function getProjects(data: ProjectFormData) {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({}),
     });
 
-    if (!response.ok) {
-      revalidatePath("/project");
-      return { success: false, data: null };
+    if (response.ok) {
+      const data = await response.json(); 
+      return { success: true, data };    
     }
 
-    return { success: true };
+    return { success: false, data: [] };
   } catch (error) {
-    return { success: false, data: null };
+    console.error("Error fetching projects:", error);
+    return { success: false, data: [] };
   }
 }

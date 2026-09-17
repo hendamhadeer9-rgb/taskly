@@ -79,7 +79,7 @@ export default function Sidebar({
               />
             ) : (
               <div className="flex items-center gap-2">
-                <Image src="/icon.svg" alt="logo" width={20} height={20} />
+                <Image src="/Icon.svg" alt="logo" width={20} height={20} />
                 <Typography
                   variant="title-md"
                   className="font-bold text-slate-900"
