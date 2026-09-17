@@ -27,7 +27,7 @@ export default function Sidebar({
   const [isProjectOpen, setIsProjectOpen] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const isProjectsSection = pathname.startsWith("/projects");
+  const isProjectsSection = pathname.startsWith("/project");
 
   const mainNavItems = [
     { label: "Projects", icon: "Folder", href: "/project" },
