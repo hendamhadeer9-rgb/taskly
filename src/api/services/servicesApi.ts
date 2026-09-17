@@ -1,6 +1,7 @@
 "use server";
 
-import { ProjectFormData } from "@/app/projects/add/page";
+import { ProjectFormData } from "@/app/project/add/page";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 export async function getUserData() {
@@ -58,11 +59,42 @@ export async function addNewProject(data: ProjectFormData) {
         description: data.description,
       }),
     });
-    if (!response.ok) {
-      return false;
+    if (response.ok) {
+      revalidatePath("/project");
+
+      return { success: true };
     }
-    return { success: true };
+    return { success: false };
   } catch (error) {
     return { success: false };
+  }
+}
+
+export async function getProjects(data: ProjectFormData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  const baseUrl =
+    process.env.BASE_URL || "https://yubvtliweecqbmsqmlrr.supabase.co";
+  const apiKey =
+    process.env.API_KEY || "sb_publishable_oFcILbgYv5m9OURLvPGRqw_dAPaH8-P";
+
+  try {
+    const response = await fetch(`${baseUrl}/rest/v1/rpc/get_projects`, {
+      method: "POST",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      revalidatePath("/project");
+      return { success: false, data: null };
+    }
+
+    return { success: true };
+  } catch (error) {
+    return { success: false, data: null };
   }
 }

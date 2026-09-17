@@ -10,10 +10,12 @@ import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { addNewProject } from "@/api/services/servicesApi";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export type ProjectFormData = z.infer<typeof projectSchema>;
 
 export default function AddNewProject() {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -39,6 +41,8 @@ export default function AddNewProject() {
 
       if (response) {
         toast.success("Project created successfully");
+        router.push("/project");
+        router.refresh();
       } else {
         toast.error("Failed To Add New Project, Try Again Later");
       }
@@ -54,7 +58,7 @@ export default function AddNewProject() {
     <>
       <div className="pt-8 hidden md:block">
         <Typography variant="label-sm" className="px-8">
-          Projects <span className="mx-1">/</span>{" "}
+          Projects <span className="mx-1">/</span>
           <span className="text-primary">Add New Project</span>
         </Typography>
         <Typography variant="headline-lg" className="pl-8 pt-4">

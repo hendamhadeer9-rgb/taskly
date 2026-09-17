@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Icon from "../../components/ui/Icon";
 
 type IconName = "Folder" | "Group" | "Info" | "Checklist";
@@ -9,6 +10,7 @@ interface NavItem {
   id: string;
   label: string;
   iconName: IconName;
+  href: string;
   isCenter?: boolean;
 }
 
@@ -21,27 +23,32 @@ export default function MobileNav() {
       id: "epics",
       label: "Epics",
       iconName: "Group",
+      href: "/project/${id}/epic",
     },
     {
       id: "tasks",
       label: "Tasks",
       iconName: "Checklist",
+      href: "/project/${id}/tasks",
     },
     {
       id: "projects",
       label: "Projects",
       iconName: "Folder",
+      href: "/project/${id}/project",
       isCenter: true,
     },
     {
       id: "members",
       label: "Members",
       iconName: "Group",
+      href: "/project/${id}/members",
     },
     {
       id: "details",
       label: "Details",
       iconName: "Info",
+      href: "",
     },
   ];
 
@@ -68,8 +75,9 @@ export default function MobileNav() {
           const isActive = activeTab === item.id;
 
           return (
-            <button
+            <Link
               key={item.id}
+              href={item.href}
               onClick={() => handleItemClick(item)}
               className={`flex flex-col items-center justify-center min-w-12.5 transition-colors ${
                 isActive
@@ -90,7 +98,7 @@ export default function MobileNav() {
                 />
               </div>
               <span className="mt-1 text-label-sm">{item.label}</span>
-            </button>
+            </Link>
           );
         })}
       </div>

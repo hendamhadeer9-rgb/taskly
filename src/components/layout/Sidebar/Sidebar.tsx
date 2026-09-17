@@ -30,15 +30,15 @@ export default function Sidebar({
   const isProjectsSection = pathname.startsWith("/projects");
 
   const mainNavItems = [
-    { label: "Projects", icon: "Folder", href: "/projects" },
+    { label: "Projects", icon: "Folder", href: "/project" },
     { label: "My Statistics", icon: "Equalizer", href: "/statistics" },
   ];
 
   const projectSubItems = [
-    { label: "Epics", icon: "Flowchart", href: "/projects/active/epics" },
-    { label: "Tasks", icon: "Checklist", href: "/projects/active/tasks" },
-    { label: "Members", icon: "Group", href: "/projects/active/members" },
-    { label: "Details", icon: "info", href: "/projects/active/details" },
+    { label: "Epics", icon: "Flowchart", href: "/project/active/epics" },
+    { label: "Tasks", icon: "Checklist", href: "/project/active/tasks" },
+    { label: "Members", icon: "Group", href: "/project/active/members" },
+    { label: "Details", icon: "info", href: "/project/active/details" },
   ];
 
   async function handleLogout() {

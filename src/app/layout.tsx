@@ -10,7 +10,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "TASKLY",
   description: "Task Management System",
-  icons: "/Icon.svg",
+  icons: {
+    icon: "/Icon.svg",
+  },
 };
 
 export default function RootLayout({

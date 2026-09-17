@@ -39,7 +39,7 @@ export default function LoginForm() {
     const response = (await logInAction(data)) as { ok: boolean };
     if (response?.ok) {
       toast.success("Logged in successfully");
-      router.push("/projects");
+      router.push("/project");
       router.refresh();
     } else {
       toast.error("Failed to log in");
