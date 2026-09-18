@@ -10,6 +10,7 @@ import { AddProjectCard } from "@/components/features/projects/AddProjectCard";
 import { getProjects } from "@/api/services/servicesApi";
 import { ProjectsEmptyState } from "@/components/features/projects/ProjectsEmptyState";
 import { ProjectsErrorState } from "@/components/features/projects/ProjectsErrorState";
+import Pagination from "@/components/Pagination/Pagination";
 
 export default async function ProjectsList() {
   const result = await getProjects();
@@ -28,7 +29,6 @@ export default async function ProjectsList() {
 
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
-      {/* Header Section */}
       <div className="flex justify-between items-center mb-8">
         <div>
           <Typography
@@ -42,15 +42,12 @@ export default async function ProjectsList() {
           </Typography>
         </div>
 
-        {/* Desktop Create Button */}
         <Link href="/project/add" className="hidden sm:block">
           <Button variant="primary" className="px-5 py-2.5">
             Create New Project
           </Button>
         </Link>
       </div>
-
-      {/* Projects Grid matching Figma (1 col on mobile, 3 cols on desktop) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {projectsList.map((project) => (
           <ProjectCard key={project.id} project={project} />
@@ -67,6 +64,8 @@ export default async function ProjectsList() {
           <span className="text-2xl font-light">+</span>
         </Button>
       </Link>
+
+      <Pagination />
     </div>
   );
 }

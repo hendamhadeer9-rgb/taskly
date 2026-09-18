@@ -89,7 +89,6 @@ export default function AddNewProject() {
               </div>
             </div>
 
-            {/* Form */}
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="p-4 sm:p-8 space-y-5"
@@ -101,7 +100,6 @@ export default function AddNewProject() {
                 {...register("title")}
               />
 
-              {/* Description Field */}
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-[11px] font-bold text-neutral-muted uppercase tracking-wider">
@@ -125,7 +123,6 @@ export default function AddNewProject() {
                 </div>
               </div>
 
-              {/* Action Buttons - تعديل الترتيب والعرض للشاشات الصغيرة */}
               <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 pt-4">
                 <Button
                   variant="ghost"
@@ -149,7 +146,6 @@ export default function AddNewProject() {
               </div>
             </form>
 
-            {/* Pro Tip Section */}
             <div className=" px-4 sm:px-6 py-3.5 bg-surface-low flex items-center gap-2 text-xs text-neutral-muted rounded-b-lg">
               <span>
                 <Image

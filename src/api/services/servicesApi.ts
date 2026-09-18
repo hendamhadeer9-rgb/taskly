@@ -60,8 +60,8 @@ export async function addNewProject(data: ProjectFormData) {
       }),
     });
     if (response.ok) {
-     revalidatePath("/project");
-      
+      revalidatePath("/project");
+
       return { success: true };
     }
     return { success: false };
@@ -69,7 +69,6 @@ export async function addNewProject(data: ProjectFormData) {
     return { success: false };
   }
 }
-
 
 export async function getProjects() {
   const cookieStore = await cookies();
@@ -91,8 +90,8 @@ export async function getProjects() {
     });
 
     if (response.ok) {
-      const data = await response.json(); 
-      return { success: true, data };    
+      const data = await response.json();
+      return { success: true, data };
     }
 
     return { success: false, data: [] };
