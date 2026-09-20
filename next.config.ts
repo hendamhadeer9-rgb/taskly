@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  
   reactCompiler: true,
-  turbo: {},
+turbopack: {},
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,
