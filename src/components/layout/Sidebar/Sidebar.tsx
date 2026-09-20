@@ -19,7 +19,6 @@ import Details from "@/../public/details.svg";
 import Collaps from "@/../public/collaps.svg";
 import Uncollaps from "@/../public/uncollaps.svg";
 import Logout from "@/../public/logout.svg";
-import Plus from "@/../public/plus.svg"
 
 interface SidebarProps {
   isOpen: boolean;
@@ -255,7 +254,7 @@ export default function Sidebar({
           >
             <Logout className="w-5 h-5 shrink-0" />
             {!isCollapsed && (
-              <div><Plus />{isLoggingOut ? "Logging out..." : "Logout"}</div>
+              <div>{isLoggingOut ? "Logging out..." : "Logout"}</div>
             )}
           </button>
         </div>
