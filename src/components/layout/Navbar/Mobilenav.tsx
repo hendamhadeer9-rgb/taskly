@@ -1,96 +1,81 @@
 "use client";
 
-import { useState } from "react";
-import Icon from "../../ui/Icon";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import Projects from "@/../public/projects.svg";
+import Epics from "@/../public/epics.svg";
+import Tasks from "@/../public/tasks.svg";
+import Members from "@/../public/members.svg";
+import Details from "@/../public/details.svg";
 
-type IconName = "Folder" | "Group" | "Info" | "Checklist";
-
-interface NavItem {
-  id: string;
-  label: string;
-  iconName: IconName;
-  isCenter?: boolean;
+interface MobileNavProps {
+  activeProjectId?: string;
 }
 
-export default function MobileNav() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>("projects");
+export default function MobileNav({ activeProjectId }: MobileNavProps) {
+  const pathname = usePathname();
 
-  const navItems: NavItem[] = [
+  // استخراج الـ projectId من الـ URL إن وجد أو استخدام القيمة القادمة من الـ Props
+  const pathSegments = pathname.split("/");
+  const currentProjectId =
+    pathSegments[1] === "project" && pathSegments[2]
+      ? pathSegments[2]
+      : activeProjectId || "active";
+
+  const navItems = [
     {
       id: "epics",
       label: "Epics",
-      iconName: "Group",
+      icon: <Epics />,
+      href: `/project/${currentProjectId}/epics`,
     },
     {
       id: "tasks",
       label: "Tasks",
-      iconName: "Checklist",
+      icon: <Tasks />,
+      href: `/project/${currentProjectId}/tasks`,
     },
     {
       id: "projects",
       label: "Projects",
-      iconName: "Folder",
-      isCenter: true,
+      icon: <Projects />,
+      href: "/project",
     },
     {
       id: "members",
       label: "Members",
-      iconName: "Group",
+      icon: <Members />,
+      href: `/project/${currentProjectId}/members`,
     },
     {
       id: "details",
       label: "Details",
-      iconName: "Info",
+      icon: <Details />,
+      href: `/project/${currentProjectId}/details`,
     },
   ];
 
-  const visibleItems = isOpen
-    ? navItems
-    : navItems.filter((item) => item.isCenter);
-
-  const handleItemClick = (item: NavItem) => {
-    setActiveTab(item.id);
-
-    if (item.isCenter) {
-      setIsOpen(!isOpen);
-    }
-  };
-
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white shadow-lg md:hidden">
-      <div
-        className={`flex items-center py-2 px-3 transition-all duration-300 ${
-          isOpen ? "justify-around" : "justify-center"
-        }`}
-      >
-        {visibleItems.map((item) => {
-          const isActive = activeTab === item.id;
+      <div className="flex items-center justify-around py-2 px-3">
+        {navItems.map((item) => {
+          const isActive = pathname === item.href;
 
           return (
-            <button
+            <Link
               key={item.id}
-              onClick={() => handleItemClick(item)}
+              href={item.href}
               className={`flex flex-col items-center justify-center min-w-12.5 transition-colors ${
                 isActive
-                  ? "font-semibold text-primary!"
-                  : "text-neutral-dark! hover:text-primary!"
+                  ? "font-semibold text-primary [&_path]:fill-primary"
+                  : "text-neutral-dark hover:text-primary [&_path]:fill-neutral-dark hover:[&_path]:fill-primary"
               }`}
             >
               <div className="w-5 h-5 flex items-center justify-center">
-                <Icon
-                  name={item.iconName}
-                  width={20}
-                  height={20}
-                  className={
-                    isActive
-                      ? "text-primary!"
-                      : "text-neutral-dark! hover:text-primary!"
-                  }
-                />
+                {item.icon}
               </div>
               <span className="mt-1 text-label-sm">{item.label}</span>
-            </button>
+            </Link>
           );
         })}
       </div>

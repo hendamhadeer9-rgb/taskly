@@ -12,8 +12,11 @@ import { registerAction } from "./signup.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Icon from "@/components/ui/Icon";
-import Image from "next/image";
+import Logo from "@/../public/Icon.svg"
+import Eyeoff from "@/../public/eyeoff.svg";
+import Eyeon from "@/../public/eyeon.svg";
+import Circle from "@/../public/circle.svg";
+import Check_circle from "@/../public/check_circle.svg";
 
 export type RegisterFormValues = zod.infer<typeof registerSchema>;
 
@@ -73,7 +76,7 @@ export default function SignupForm() {
   return (
     <div className="min-h-screen w-full bg-Surface-Low flex flex-col justify-between p-4 sm:p-8">
       <header className="w-full max-w-7xl mx-auto flex items-center justify-start py-2 gap-2">
-        <Image src="/Icon.svg" alt="logo" width={16} height={20} />
+        <Logo />
         <Typography variant="title-md" className="font-bold">
           TASKLY
         </Typography>
@@ -143,11 +146,9 @@ export default function SignupForm() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-8 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
                   >
-                    <Icon
-                      name={showPassword ? "visibility_off" : "visibility"}
-                      width={20}
-                      height={20}
-                    />
+                    <div />
+                  {showPassword ? <Eyeon /> : <Eyeoff />}
+                  <div />
                   </button>
                 </div>
                 {errors.password && (
@@ -171,13 +172,7 @@ export default function SignupForm() {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-8 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
                   >
-                    <Icon
-                      name={
-                        showConfirmPassword ? "visibility_off" : "visibility"
-                      }
-                      width={20}
-                      height={20}
-                    />
+                    
                   </button>
                 </div>
                 {errors.confirmPassword && (
@@ -191,16 +186,12 @@ export default function SignupForm() {
             <div className="p-4 rounded-lg bg-condition-box space-y-2">
               {rules.map((rule) => (
                 <div key={rule.id} className="flex items-center gap-2">
-                  <Icon
-                    name={
-                      rule.isMet ? "check_circle " : "radio_button_unchecked"
+                  <div>
+                    {
+                      rule.isMet ? <Circle/> : <Check_circle/>
                     }
-                    width={16}
-                    height={16}
-                    className={
-                      rule.isMet ? "text-success!" : "text-neutral-muted"
-                    }
-                  />
+                  </div>
+                 
                   <Typography
                     variant="label-sm"
                     className=" text-neutral-muted"

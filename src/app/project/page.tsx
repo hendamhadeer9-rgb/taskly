@@ -33,17 +33,17 @@ export default async function ProjectsList() {
         <div>
           <Typography
             variant="headline-lg"
-            className="font-bold text-neutral-900"
+            className="font-bold "
           >
             Projects
           </Typography>
-          <Typography variant="body-md" className="text-neutral-muted mt-1">
+          <Typography variant="body-md" className="text-neutral-muted font-regular mt-1">
             Manage and curate your projects
           </Typography>
         </div>
 
         <Link href="/project/add" className="hidden sm:block">
-          <Button variant="primary" className="px-5 py-2.5">
+          <Button variant="primary" className="px-5 py-2.5 font-medium">
             Create New Project
           </Button>
         </Link>
@@ -59,7 +59,7 @@ export default async function ProjectsList() {
       <Link href="/project/add">
         <Button
           variant="primary"
-          className="sm:hidden fixed bottom-20 right-5 w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center active:scale-95 transition-transform z-50"
+          className="sm:hidden fixed bottom-20 right-5 w-12 h-12 bg-primary font-medium text-white rounded-xl flex items-center justify-center  z-50"
         >
           <span className="text-2xl font-light">+</span>
         </Button>

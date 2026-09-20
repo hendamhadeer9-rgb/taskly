@@ -13,9 +13,9 @@ import { Input } from "@/components/ui/Input";
 import { Typography } from "@/components/ui/Typography";
 import { loginSchema } from "./logIn.Schema";
 import { logInAction } from "./logIn.Actions";
-import Icon from "@/components/ui/Icon";
-import Image from "next/image";
-
+import Logo from "@/../public/Icon.svg"
+import Eyeoff from "@/../public/eyeoff.svg";
+import Eyeon from "@/../public/eyeon.svg";
 export type LoginFormValues = zod.infer<typeof loginSchema>;
 
 export default function LoginForm() {
@@ -49,7 +49,7 @@ export default function LoginForm() {
   return (
     <div className="min-h-screen w-full bg-background flex flex-col justify-between p-4 sm:p-8">
       <header className="w-full max-w-7xl mx-auto flex items-center justify-start py-2 gap-2">
-        <Image src="/Icon.svg" alt="logo" width={16} height={20} />
+        <Logo />
         <Typography variant="title-md" className="font-bold">
           TASKLY
         </Typography>
@@ -115,11 +115,9 @@ export default function LoginForm() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-8 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
                 >
-                  <Icon
-                    name={showPassword ? "visibility_off" : "visibility"}
-                    width={20}
-                    height={20}
-                  />
+                  <div />
+                  {showPassword ? <Eyeoff /> : <Eyeon />}
+                  <div />
                 </button>
               </div>
 

@@ -1,5 +1,6 @@
 import React from "react";
-import Image from "next/image";
+import Left from "@/../public/left.svg"
+import Right from "@/../public/right.svg"
 
 export default function Pagination() {
   return (
@@ -8,7 +9,7 @@ export default function Pagination() {
         {/* Previous Button */}
 
         <button className="w-8 h-8 flex items-center justify-center rounded-xs border border-neutral-border text-neutral-muted hover:bg-surface-highest disabled:opacity-50 disabled:cursor-not-allowed">
-          <Image src="/left.svg" alt="left-icon" width={4} height={7} />
+          <Left />
         </button>
 
         {/* Page 1 (Active) */}
@@ -38,7 +39,7 @@ export default function Pagination() {
 
         {/* Next Button */}
         <button className="w-8 h-8 flex items-center justify-center rounded-xs border border-neutral-border text-neutral-dark hover:bg-surface-highest">
-          <Image src="/right.svg" alt="right-icon" width={4} height={7} />
+          <Right/>
         </button>
       </div>
     </div>

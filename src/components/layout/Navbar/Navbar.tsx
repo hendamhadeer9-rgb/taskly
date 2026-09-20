@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Icon from "../../ui/Icon";
 import { Typography } from "../../ui/Typography";
 import { getUserData } from "@/api/services/servicesApi";
+import Menu from "@/../public/menu.svg"
 interface usertype {
   user_metadata: {
     name: string;
@@ -44,21 +44,17 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const avatarLetter = getAvatarLetters(userName);
 
   return (
-    <header className="h-20 md:h-16 w-full border-b border-b-gray-400 bg-white px-6 py-4 flex items-center justify-between">
+    <header className="h-20 md:h-16 w-full border-b border-b-nav-border bg-white px-6 py-4 flex items-center justify-between">
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
           className="md:hidden"
           aria-label="Open sidebar"
         >
-          <Icon
-            name="menu"
-            width={20}
-            height={16}
-            className="text-neutral-dark!"
+          <Menu
           />
         </button>
-        <Typography variant="title-md" className="md:hidden font-bold">
+        <Typography variant="title-md" className="md:hidden  font-bold">
           TASKLY
         </Typography>
       </div>
@@ -72,10 +68,10 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
             </div>
           ) : (
             <div className="hidden sm:flex flex-col items-end">
-              <span className="text-body-md text-neutral-dark capitalize">
+              <span className="text-weight-semibold text-neutral-dark capitalize">
                 {userName}
               </span>
-              <span className="text-label-sm text-primary">{userRole}</span>
+              <span className="text-weight-bold text-primary">{userRole}</span>
             </div>
           )}
 

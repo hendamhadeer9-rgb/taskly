@@ -1,7 +1,9 @@
 import React from "react";
 import Link from "next/link";
 import { Typography } from "@/components/ui/Typography";
-import Icon from "@/components/ui/Icon";
+import Epics from "@/../public/epics.svg";
+import Tasks from "@/../public/tasks.svg";
+import Members from "@/../public/members.svg";
 
 export interface Project {
   id: string | number;
@@ -26,47 +28,63 @@ const formatDate = (dateString: string) => {
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   return (
-    <Link href={`/project/${project.id}/epic`}>
-      <div className="bg-white rounded-lg p-6 min-h-55 border border-neutral-border shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between h-full">
-        <div>
+    <div className="bg-white rounded-lg p-6 min-h-55 flex flex-col justify-between h-full">
+      <div>
+        {/* الضغط على الاسم أو الوصف يوجه لصفحة الـ epics كافتراضي */}
+        <Link href={`/project/${project.id}/epics`}>
           <Typography
             variant="title-md"
-            className="font-semibold text-neutral-dark mb-2"
+            className="font-medium text-neutral-dark mb-2 hover:text-primary transition-colors"
           >
             {project.name}
           </Typography>
 
           <Typography
             variant="body-md"
-            className="text-neutral-muted line-clamp-2 text-sm mb-6"
+            className="text-neutral-muted font-regular line-clamp-2 text-sm mb-6"
           >
-            {project.description || "No description provided."}
+            {project.description}
+          </Typography>
+        </Link>
+      </div>
+
+      <div>
+        {/* لينكات الأقسام الفرعية متوافقة مع مسارات الـ Sidebar */}
+        <div className="flex items-center justify-between gap-1.5 sm:gap-1 py-4 border-b border-nav-border text-label-sm text-primary font-semibold mb-3">
+          <Link
+            href={`/project/${project.id}/epics`}
+            className="flex items-center gap-1 [&_path]:fill-primary"
+          >
+            <Epics className="w-4 h-4" />
+            <span>Epics</span>
+          </Link>
+
+          <Link
+            href={`/project/${project.id}/tasks`}
+            className="flex items-center gap-1 [&_path]:fill-primary"
+          >
+            <Tasks className="w-4 h-4" />
+            <span>Tasks</span>
+          </Link>
+
+          <Link
+            href={`/project/${project.id}/members`}
+            className="flex items-center gap-1 [&_path]:fill-primary"
+          >
+            <Members className="w-4 h-4" />
+            <span>Members</span>
+          </Link>
+        </div>
+
+        <div className="flex justify-between items-center text-xs text-neutral-muted">
+          <Typography variant="label-sm" className="text-neutral-muted">
+            CREATED AT
+          </Typography>
+          <Typography variant="label-sm" className="text-neutral-muted">
+            {formatDate(project.created_at)}
           </Typography>
         </div>
-
-        <div>
-          <div className="flex items-center justify-between gap-4 py-4 border-b border-neutral-border text-xs text-primary font-medium mb-3">
-            <span className="flex items-center gap-1">
-              <Icon name="Flowchart"></Icon>Epics
-            </span>
-            <span className="flex items-center gap-1">
-              <Icon name="Checklist"></Icon>Tasks
-            </span>
-            <span className="flex items-center gap-1">
-              <Icon name="Group"></Icon>Members
-            </span>
-          </div>
-
-          <div className="flex justify-between items-center text-xs text-neutral-muted">
-            <Typography variant="label-sm" className="text-neutral-muted">
-              CREATED AT
-            </Typography>
-            <Typography variant="label-sm" className="text-neutral-muted">
-              {formatDate(project.created_at)}
-            </Typography>
-          </div>
-        </div>
       </div>
-    </Link>
+    </div>
   );
 };

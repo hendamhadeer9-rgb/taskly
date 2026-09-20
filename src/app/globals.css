@@ -18,10 +18,19 @@
   --success: #82f9be;
   --error: #ba1a1a;
   --warning: #ffb300;
+  --nav-border: #0000001A;
+
+  /* CSS Variables للأوزان 200 و 400 و 600 فقط */
+  --font-weight-light: 200;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 }
 
 @theme {
   --font-sans: var(--font-inter);
+  
   --text-display-lg: 56px;
   --text-display-lg--line-height: 56px;
 
@@ -36,6 +45,13 @@
 
   --text-label-sm: 11px;
   --text-label-sm--line-height: 16.5px;
+  
+  /* ربط الأوزان المطلوبة بـ Tailwind */
+  --font-weight-light: var(--font-weight-light);
+  --font-weight-regular: var(--font-weight-regular);
+  --font-weight-semibold: var(--font-weight-semibold);
+  --font-weight-bold: var(--font-weight-bold);
+  --font-weight-medium: var(--font-weight-medium);
 
   --color-primary: var(--primary);
   --background-image-Primary-Gradient: var(--Primary-Gradient);
@@ -53,6 +69,7 @@
   --color-success: var(--success);
   --color-error: var(--error);
   --color-warning: var(--warning);
+  --color-nav-border: var(--nav-border);
 
   --shadow-card: 0px 24px 48px rgba(4, 27, 60, 0.06);
 }

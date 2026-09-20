@@ -1,15 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function proxy(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+export function proxy(request: NextRequest) {
+  const accessToken = request.cookies.get('token')?.value;
 
-  if (token) {
-    return NextResponse.next();
+  if (!accessToken) {
+    return NextResponse.redirect(new URL('/logIn', request.url));
   }
 
-  return NextResponse.redirect(new URL("/logIn", req.url));
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/"],
+  matcher: ['/project/:path*'],
 };

@@ -24,9 +24,6 @@ export async function logoutAction() {
         Authorization: `Bearer ${token}`,
       },
     });
-  } catch (error) {
-    console.log("logout error", error);
-  } finally {
     cookieStore.set("token", "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -36,7 +33,9 @@ export async function logoutAction() {
     });
 
     cookieStore.delete("token");
-  }
+  } catch (error) {
+    console.log("logout error", error);
+  } 
 
   return true;
 }

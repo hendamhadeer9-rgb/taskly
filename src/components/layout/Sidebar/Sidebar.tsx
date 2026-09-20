@@ -3,11 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import Icon from "../../ui/Icon";
-import Image from "next/image";
 import { Typography } from "../../ui/Typography";
 import { logoutAction } from "@/app/(Auth)/logout/logout.action";
 import { toast } from "sonner";
+import Logo from "@/../public/Icon.svg";
+import Close from "@/../public/close.svg";
+import Projects from "@/../public/projects.svg";
+import Statistics from "@/../public/statistics.svg";
+import Folder from "@/../public/folder.svg";
+import Arrow from "@/../public/arrow_up.svg";
+import Epics from "@/../public/epics.svg";
+import Tasks from "@/../public/tasks.svg";
+import Members from "@/../public/members.svg";
+import Details from "@/../public/details.svg";
+import Collaps from "@/../public/collaps.svg";
+import Uncollaps from "@/../public/uncollaps.svg";
+import Logout from "@/../public/logout.svg";
+import Plus from "@/../public/plus.svg"
 
 interface SidebarProps {
   isOpen: boolean;
@@ -38,29 +50,29 @@ export default function Sidebar({
       : activeProjectId || "active";
 
   const mainNavItems = [
-    { label: "Projects", icon: "Folder", href: "/project" },
-    { label: "My Statistics", icon: "Equalizer", href: "/statistics" },
+    { label: "Projects", icon: <Projects className="w-5 h-5 shrink-0" />, href: "/project" },
+    { label: "My Statistics", icon: <Statistics className="w-5 h-5 shrink-0" />, href: "/statistics" },
   ];
 
   const projectSubItems = [
     {
       label: "Epics",
-      icon: "Flowchart",
+      icon: <Epics className="w-5 h-5 shrink-0" />,
       href: `/project/${currentProjectId}/epics`,
     },
     {
       label: "Tasks",
-      icon: "Checklist",
+      icon: <Tasks className="w-5 h-5 shrink-0" />,
       href: `/project/${currentProjectId}/tasks`,
     },
     {
       label: "Members",
-      icon: "Group",
+      icon: <Members className="w-5 h-5 shrink-0" />,
       href: `/project/${currentProjectId}/members`,
     },
     {
       label: "Details",
-      icon: "info",
+      icon: <Details className="w-5 h-5 shrink-0" />,
       href: `/project/${currentProjectId}/details`,
     },
   ];
@@ -73,7 +85,7 @@ export default function Sidebar({
       if (logout) {
         router.push("/logIn");
         router.refresh();
-        toast.success("Loged out successfully");
+        toast.success("Logged out successfully");
       }
     } catch (error) {
       console.error("Logout error:", error);
@@ -85,38 +97,31 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`fixed top-0 left-0 z-100 h-screen bg-surface-low flex flex-col justify-between transition-transform duration-300 ease-in-out 
+      className={`fixed top-0 left-0 z-100 h-screen bg-surface-low flex flex-col justify-between transition-all duration-300 ease-in-out 
         ${isCollapsed ? "md:w-20" : "md:w-64"}
-        ${isOpen ? "translate-x-0 w-full" : "-translate-x-full md:translate-x-0 "}
+        ${isOpen ? "translate-x-0 w-full" : "-translate-x-full md:translate-x-0"}
       `}
     >
-      <div className="p-4 flex flex-col gap-6 overflow-y-auto">
-        <div className="flex items-center justify-between h-10 px-2">
+      <div className={`p-4 flex flex-col gap-6 ${isCollapsed ? "overflow-visible" : "overflow-y-auto"}`}>
+        {/* Header / Logo */}
+        <div className={`flex items-center h-10 px-2 ${isCollapsed ? "justify-center" : "justify-between"}`}>
           {isCollapsed ? (
-            <Image
-              src="/Icon.svg"
-              alt="logo"
-              width={20}
-              height={20}
-              className="mx-auto"
-            />
+            <Logo className="w-8 h-8 shrink-0" />
           ) : (
             <div className="flex items-center gap-2">
-              <Image src="/Icon.svg" alt="logo" width={20} height={20} />
-              <Typography
-                variant="title-md"
-                className="font-bold text-slate-900"
-              >
+              <Logo className="w-8 h-8 shrink-0" />
+              <Typography variant="title-md" className="font-bold text-neutral-dark">
                 TASKLY
               </Typography>
             </div>
           )}
 
           <button onClick={onClose} className="md:hidden p-1 rounded-lg">
-            <Icon name="close" width={20} height={20} />
+            <Close />
           </button>
         </div>
 
+        {/* Main Navigation */}
         <nav className="flex flex-col gap-1">
           {mainNavItems.map((item) => {
             const isActive = pathname === item.href;
@@ -125,36 +130,33 @@ export default function Sidebar({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-full font-medium text-sm ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-sm font-medium text-sm transition-colors ${
+                  isCollapsed ? "justify-center" : ""
+                } ${
                   isActive
-                    ? "bg-white"
-                    : "text-neutral-dark hover:bg-surface-highest"
+                    ? "bg-white text-primary font-semibold [&_path]:fill-primary"
+                    : "text-neutral-dark hover:bg-surface-highest [&_path]:fill-neutral-dark"
                 }`}
               >
-                <Icon
-                  name={item.icon}
-                  width={20}
-                  height={20}
-                  className="text-neutral-dark!"
-                />
+                <div className="shrink-0 flex items-center justify-center">
+                  {item.icon}
+                </div>
                 {!isCollapsed && <span>{item.label}</span>}
               </Link>
             );
           })}
 
+          {/* Active Project Accordion Section */}
           {isProjectsSection && (
-            <div className="mt-2">
+            <div className="mt-2 relative group">
               <button
                 onClick={() => setIsProjectOpen(!isProjectOpen)}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-full font-medium text-sm text-neutral-dark hover:bg-surface-highest"
+                className={`w-full flex items-center px-3 py-2.5 rounded-sm font-medium text-sm text-neutral-dark bg-surface-highest transition-colors ${
+                  isCollapsed ? "justify-center" : "justify-between"
+                }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon
-                    name="folder"
-                    width={20}
-                    height={20}
-                    className="text-neutral-dark!"
-                  />
+                  <Folder className="w-5 h-5 shrink-0" />
                   {!isCollapsed && (
                     <span className="truncate max-w-32.5">
                       Active Project Name
@@ -168,22 +170,14 @@ export default function Sidebar({
                       isProjectOpen ? "rotate-0" : "rotate-180"
                     }`}
                   >
-                    <Image
-                      src="/active_project_arrow.svg"
-                      alt="arrow"
-                      width={9}
-                      height={5}
-                    />
+                    <Arrow />
                   </div>
                 )}
               </button>
 
-              {isProjectOpen && (
-                <div
-                  className={`flex flex-col gap-1 mt-1 ${
-                    !isCollapsed ? "pl-6" : "pl-0"
-                  }`}
-                >
+              {/* حالة 1: القائمة المنسدلة العادية عندما يكون السايدبار مفتوحاً (Expanded) */}
+              {!isCollapsed && isProjectOpen && (
+                <div className="flex flex-col gap-1 py-1 bg-white rounded-b-sm">
                   {projectSubItems.map((subItem) => {
                     const isActive = pathname === subItem.href;
 
@@ -191,19 +185,42 @@ export default function Sidebar({
                       <Link
                         key={subItem.href}
                         href={subItem.href}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-full text-sm font-medium ${
+                        className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-full transition-colors ${
                           isActive
-                            ? "bg-surface-highest"
-                            : "text-neutral-dark hover:bg-surface-highest"
+                            ? "bg-surface-highest text-primary font-semibold [&_path]:fill-primary"
+                            : "text-neutral-dark hover:bg-surface-low [&_path]:fill-neutral-dark"
                         }`}
                       >
-                        <Icon
-                          name={subItem.icon}
-                          width={18}
-                          height={18}
-                          className="text-neutral-dark!"
-                        />
-                        {!isCollapsed && <span>{subItem.label}</span>}
+                        <div className="shrink-0 flex items-center justify-center">
+                          {subItem.icon}
+                        </div>
+                        <span>{subItem.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* حالة 2: القائمة المنبثقة عند الـ Hover فقط عندما يكون السايدبار مقفولاً (Collapsed) */}
+              {isCollapsed && (
+                <div className="absolute left-full top-0 ml-4 w-48 bg-surface-highest rounded-tr-sm rounded-br-sm p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-110 flex flex-col gap-1 ">
+                  {projectSubItems.map((subItem) => {
+                    const isActive = pathname === subItem.href;
+
+                    return (
+                      <Link
+                        key={subItem.href}
+                        href={subItem.href}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-full text-sm font-medium  ${
+                          isActive
+                            ? "bg-white text-primary font-semibold [&_path]:fill-primary shadow-xs"
+                            : "text-neutral-dark hover:bg-surface-low [&_path]:fill-neutral-dark"
+                        }`}
+                      >
+                        <div className="shrink-0 flex items-center justify-center">
+                          {subItem.icon}
+                        </div>
+                        <span>{subItem.label}</span>
                       </Link>
                     );
                   })}
@@ -214,35 +231,34 @@ export default function Sidebar({
         </nav>
       </div>
 
-      <div className="p-4 border-t border-gray-200 flex flex-col gap-1">
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="hidden md:flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-dark"
-        >
-          {isCollapsed ? (
-            <Image src="/collaps arrow.svg" alt="logo" width={11} height={20} />
-          ) : (
-            <Image
-              src="/collaps arrow 2.svg"
-              alt="logo"
-              width={11}
-              height={20}
-            />
-          )}
+      {/* Footer Controls */}
+      <div className="p-4 flex flex-col gap-1">
+        <div className="pt-3 border-t border-gray-200 flex flex-col gap-1">
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className={`hidden md:flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-dark hover:bg-surface-highest transition-colors ${
+              isCollapsed ? "justify-center" : ""
+            }`}
+          >
+            <div className="shrink-0">
+              {isCollapsed ? <Uncollaps className="w-5 h-5" /> : <Collaps className="w-5 h-5" />}
+            </div>
+            {!isCollapsed && <span>Collapse</span>}
+          </button>
 
-          {!isCollapsed && <span>Collapse</span>}
-        </button>
-
-        <button
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-          className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-error w-full text-right"
-        >
-          <Icon name="logout" width={20} height={20} className="text-error!" />
-          {!isCollapsed && (
-            <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
-          )}
-        </button>
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-error w-full hover:bg-error/10 rounded-lg transition-colors ${
+              isCollapsed ? "justify-center" : ""
+            }`}
+          >
+            <Logout className="w-5 h-5 shrink-0" />
+            {!isCollapsed && (
+              <div><Plus />{isLoggingOut ? "Logging out..." : "Logout"}</div>
+            )}
+          </button>
+        </div>
       </div>
     </aside>
   );
