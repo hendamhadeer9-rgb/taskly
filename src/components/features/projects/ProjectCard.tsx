@@ -31,7 +31,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     <div className="bg-white rounded-lg p-6 min-h-55 flex flex-col justify-between h-full">
       <div>
         {/* الضغط على الاسم أو الوصف يوجه لصفحة الـ epics كافتراضي */}
-        <Link href={`/project/${project.id}/epics`}>
+        <Link href={`/project/${project.id}/epic`}>
           <Typography
             variant="title-md"
             className="font-medium text-neutral-dark mb-2 hover:text-primary transition-colors"

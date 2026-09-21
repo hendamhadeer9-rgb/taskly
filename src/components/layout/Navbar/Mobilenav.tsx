@@ -20,14 +20,14 @@ export default function MobileNav({ activeProjectId }: MobileNavProps) {
   const currentProjectId =
     pathSegments[1] === "project" && pathSegments[2]
       ? pathSegments[2]
-      : activeProjectId || "active";
+      : activeProjectId ;
 
   const navItems = [
     {
       id: "epics",
       label: "Epics",
       icon: <Epics />,
-      href: `/project/${currentProjectId}/epics`,
+      href: `/project/${currentProjectId}/epic`,
     },
     {
       id: "tasks",
@@ -39,7 +39,7 @@ export default function MobileNav({ activeProjectId }: MobileNavProps) {
       id: "projects",
       label: "Projects",
       icon: <Projects />,
-      href: "/project",
+      href: `/project/${currentProjectId}`,
     },
     {
       id: "members",
@@ -51,7 +51,7 @@ export default function MobileNav({ activeProjectId }: MobileNavProps) {
       id: "details",
       label: "Details",
       icon: <Details />,
-      href: `/project/${currentProjectId}/details`,
+      href: `/project/${currentProjectId}/edite`,
     },
   ];
 

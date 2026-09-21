@@ -40,24 +40,32 @@ export default function Sidebar({
   const [isProjectOpen, setIsProjectOpen] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const isProjectsSection = pathname.startsWith("/project");
-
   const pathSegments = pathname.split("/");
   const currentProjectId =
     pathSegments[1] === "project" && pathSegments[2]
       ? pathSegments[2]
-      : activeProjectId || "active";
+      : activeProjectId;
+
+  const isProjectsSection = pathname.startsWith("/project") && currentProjectId;
 
   const mainNavItems = [
-    { label: "Projects", icon: <Projects className="w-5 h-5 shrink-0" />, href: "/project" },
-    { label: "My Statistics", icon: <Statistics className="w-5 h-5 shrink-0" />, href: "/statistics" },
+    {
+      label: "Projects",
+      icon: <Projects className="w-5 h-5 shrink-0" />,
+      href: "/project",
+    },
+    {
+      label: "My Statistics",
+      icon: <Statistics className="w-5 h-5 shrink-0" />,
+      href: "/statistics",
+    },
   ];
 
   const projectSubItems = [
     {
       label: "Epics",
       icon: <Epics className="w-5 h-5 shrink-0" />,
-      href: `/project/${currentProjectId}/epics`,
+      href: `/project/${currentProjectId}/epic`,
     },
     {
       label: "Tasks",
@@ -72,7 +80,7 @@ export default function Sidebar({
     {
       label: "Details",
       icon: <Details className="w-5 h-5 shrink-0" />,
-      href: `/project/${currentProjectId}/details`,
+      href: `/project/${currentProjectId}/edite`,
     },
   ];
 
@@ -101,15 +109,22 @@ export default function Sidebar({
         ${isOpen ? "translate-x-0 w-full" : "-translate-x-full md:translate-x-0"}
       `}
     >
-      <div className={`p-4 flex flex-col gap-6 ${isCollapsed ? "overflow-visible" : "overflow-y-auto"}`}>
+      <div
+        className={`p-4 flex flex-col gap-6 ${isCollapsed ? "overflow-visible" : "overflow-y-auto"}`}
+      >
         {/* Header / Logo */}
-        <div className={`flex items-center h-10 px-2 ${isCollapsed ? "justify-center" : "justify-between"}`}>
+        <div
+          className={`flex items-center h-10 px-2 ${isCollapsed ? "justify-center" : "justify-between"}`}
+        >
           {isCollapsed ? (
-            <Logo className="w-8 h-8 shrink-0" />
+            <Logo />
           ) : (
             <div className="flex items-center gap-2">
-              <Logo className="w-8 h-8 shrink-0" />
-              <Typography variant="title-md" className="font-bold text-neutral-dark">
+              <Logo />
+              <Typography
+                variant="title-md"
+                className="font-bold text-neutral-dark"
+              >
                 TASKLY
               </Typography>
             </div>
@@ -184,10 +199,8 @@ export default function Sidebar({
                       <Link
                         key={subItem.href}
                         href={subItem.href}
-                        className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-full transition-colors ${
-                          isActive
-                            ? "bg-surface-highest text-primary font-semibold [&_path]:fill-primary"
-                            : "text-neutral-dark hover:bg-surface-low [&_path]:fill-neutral-dark"
+                        className={`flex items-center gap-3 mx-2 px-4 py-2.5 text-sm font-medium rounded-full transition-colors ${
+                          isActive && "bg-surface-low "
                         }`}
                       >
                         <div className="shrink-0 flex items-center justify-center">
@@ -211,9 +224,7 @@ export default function Sidebar({
                         key={subItem.href}
                         href={subItem.href}
                         className={`flex items-center gap-3 px-3 py-2 rounded-full text-sm font-medium  ${
-                          isActive
-                            ? "bg-white text-primary font-semibold [&_path]:fill-primary shadow-xs"
-                            : "text-neutral-dark hover:bg-surface-low [&_path]:fill-neutral-dark"
+                          isActive && "bg-white "
                         }`}
                       >
                         <div className="shrink-0 flex items-center justify-center">
@@ -232,15 +243,15 @@ export default function Sidebar({
 
       {/* Footer Controls */}
       <div className="p-4 flex flex-col gap-1">
-        <div className="pt-3 border-t border-gray-200 flex flex-col gap-1">
+        <div className="pt-3 border-t border-nav-border flex flex-col gap-1">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className={`hidden md:flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-dark hover:bg-surface-highest transition-colors ${
+            className={`hidden md:flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-dark ${
               isCollapsed ? "justify-center" : ""
             }`}
           >
             <div className="shrink-0">
-              {isCollapsed ? <Uncollaps className="w-5 h-5" /> : <Collaps className="w-5 h-5" />}
+              {isCollapsed ? <Uncollaps /> : <Collaps />}
             </div>
             {!isCollapsed && <span>Collapse</span>}
           </button>
@@ -248,8 +259,8 @@ export default function Sidebar({
           <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-error w-full hover:bg-error/10 rounded-lg transition-colors ${
-              isCollapsed ? "justify-center" : ""
+            className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-error w-full ${
+              isCollapsed && "justify-center"
             }`}
           >
             <Logout className="w-5 h-5 shrink-0" />
