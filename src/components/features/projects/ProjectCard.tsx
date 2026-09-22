@@ -4,6 +4,7 @@ import { Typography } from "@/components/ui/Typography";
 import Epics from "@/../public/epics.svg";
 import Tasks from "@/../public/tasks.svg";
 import Members from "@/../public/members.svg";
+import Edit from "@/../public/edit.svg";
 
 export interface Project {
   id: string | number;
@@ -28,59 +29,71 @@ const formatDate = (dateString: string) => {
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   return (
-    <div className="bg-white rounded-lg p-6 min-h-55 flex flex-col justify-between h-full">
-      <div>
-        {/* الضغط على الاسم أو الوصف يوجه لصفحة الـ epics كافتراضي */}
-        <Link href={`/project/${project.id}/epic`}>
+    <div className="bg-white rounded-lg p-5 sm:p-6 flex flex-col justify-between h-full w-full min-w-0">
+      <div className="min-w-0">
+        <Link href={`/project/${project.id}`} className="block min-w-0">
           <Typography
             variant="title-md"
-            className="font-medium text-neutral-dark mb-2 hover:text-primary transition-colors"
+            className="font-medium text-neutral-dark mb-2 hover:text-primary transition-colors wrap-anywhere line-clamp-1"
           >
             {project.name}
           </Typography>
 
           <Typography
             variant="body-md"
-            className="text-neutral-muted font-regular line-clamp-2 text-sm mb-6"
+            className="text-neutral-muted font-regular line-clamp-2 text-sm mb-6 wrap-anywhere"
           >
             {project.description}
           </Typography>
         </Link>
       </div>
 
-      <div>
-        {/* لينكات الأقسام الفرعية متوافقة مع مسارات الـ Sidebar */}
-        <div className="flex items-center justify-between gap-1.5 sm:gap-1 py-4 border-b border-nav-border text-label-sm text-primary font-semibold mb-3">
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-2 py-3 border-b border-nav-border text-xs sm:text-label-sm text-primary font-semibold mb-3">
           <Link
             href={`/project/${project.id}/epics`}
-            className="flex items-center gap-1 [&_path]:fill-primary"
+            className="flex items-center gap-1 [&_path]:fill-primary "
           >
-            <Epics className="w-4 h-4" />
+            <Epics />
             <span>Epics</span>
           </Link>
 
           <Link
             href={`/project/${project.id}/tasks`}
-            className="flex items-center gap-1 [&_path]:fill-primary"
+            className="flex items-center gap-1 [&_path]:fill-primary "
           >
-            <Tasks className="w-4 h-4" />
+            <Tasks />
             <span>Tasks</span>
           </Link>
 
           <Link
             href={`/project/${project.id}/members`}
-            className="flex items-center gap-1 [&_path]:fill-primary"
+            className="flex items-center gap-1 [&_path]:fill-primary "
           >
-            <Members className="w-4 h-4" />
+            <Members />
             <span>Members</span>
+          </Link>
+
+          <Link
+            href={`/project/${project.id}/edit`}
+            className="flex items-center gap-1 "
+          >
+            <Edit />
+            <span>Edit</span>
           </Link>
         </div>
 
-        <div className="flex justify-between items-center text-xs text-neutral-muted">
-          <Typography variant="label-sm" className="text-neutral-muted">
+        <div className="flex justify-between items-center text-xs text-neutral-muted gap-2">
+          <Typography
+            variant="label-sm"
+            className="text-neutral-muted shrink-0"
+          >
             CREATED AT
           </Typography>
-          <Typography variant="label-sm" className="text-neutral-muted">
+          <Typography
+            variant="label-sm"
+            className="text-neutral-muted truncate"
+          >
             {formatDate(project.created_at)}
           </Typography>
         </div>

@@ -31,13 +31,13 @@ export default async function ProjectsList() {
     <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <Typography
-            variant="headline-lg"
-            className="font-bold "
-          >
+          <Typography variant="headline-lg" className="font-bold ">
             Projects
           </Typography>
-          <Typography variant="body-md" className="text-neutral-muted font-regular mt-1">
+          <Typography
+            variant="body-md"
+            className="text-neutral-muted font-regular mt-1"
+          >
             Manage and curate your projects
           </Typography>
         </div>

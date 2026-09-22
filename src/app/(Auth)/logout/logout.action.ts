@@ -35,7 +35,7 @@ export async function logoutAction() {
     cookieStore.delete("token");
   } catch (error) {
     console.log("logout error", error);
-  } 
+  }
 
   return true;
 }

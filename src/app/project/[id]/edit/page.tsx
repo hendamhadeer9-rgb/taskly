@@ -1,30 +1,42 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { projectSchema } from "./add.schema";
+import { projectSchema } from "../../add/add.schema";
 import { Typography } from "@/components/ui/Typography";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { addNewProject } from "@/api/services/servicesApi";
+import { getProjectById, updateProject } from "@/api/services/servicesApi";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import New from "@/../public/new.svg";
 import Pro from "@/../public/pro.svg";
+import Link from "next/link";
 
-export type ProjectFormData = z.infer<typeof projectSchema>;
+export type ProjectUpdateData = z.infer<typeof projectSchema>;
 
-export default function AddNewProject() {
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export default function EditProject({ params }: PageProps) {
+  const resolvedParams = use(params);
   const router = useRouter();
+  const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const projectId = resolvedParams?.id || pathname.split("/")[2];
 
   const {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
-  } = useForm<ProjectFormData>({
+  } = useForm<ProjectUpdateData>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       title: "",
@@ -33,19 +45,42 @@ export default function AddNewProject() {
     mode: "onChange",
   });
 
+  useEffect(() => {
+    async function fetchProjectData() {
+      if (!projectId) return;
+
+      try {
+        const project = await getProjectById(projectId);
+
+        if (project) {
+          reset({
+            title: project.name,
+            description: project.description,
+          });
+        }
+      } catch (error) {
+        console.error("Error", error);
+        toast.error("Failed to load project details");
+      }
+    }
+
+    fetchProjectData();
+  }, [projectId, reset]);
+
   const descriptionValue = watch("description") || "";
 
-  async function onSubmit(data: ProjectFormData) {
+  async function onSubmit(data: ProjectUpdateData) {
     try {
       setIsSubmitting(true);
-      const response = await addNewProject(data);
 
-      if (response) {
-        toast.success("Project created successfully");
+      const response = await updateProject(projectId!, data);
+      console.log("Update Response:", response);
+
+      if (response && response.success) {
+        toast.success("Project updated successfully");
         router.push("/project");
-        router.refresh();
       } else {
-        toast.error("Failed To Add New Project, Try Again Later");
+        toast.error("Failed To update Project, Try Again Later");
       }
     } catch (error) {
       console.error("Submission Error:", error);
@@ -59,11 +94,12 @@ export default function AddNewProject() {
     <>
       <div className="pt-8 hidden md:block">
         <Typography variant="label-sm" className="px-8">
-          Projects <span className="mx-1">/</span>
-          <span className="text-primary">Add New Project</span>
+          Projects <span className="mx-1">/</span>PROJECT TITLE
+          <span className="mx-1">/</span>
+          <span className="text-primary">EDIT</span>
         </Typography>
-        <Typography variant="headline-lg" className="pl-8 pt-4">
-          Add New Project
+        <Typography variant="headline-lg" className="pl-8 pt-4 font-semibold">
+          Edit Project
         </Typography>
       </div>
 
@@ -72,12 +108,12 @@ export default function AddNewProject() {
           <div className="bg-white rounded-lg shadow-sm">
             {/* Header Section */}
             <div className="p-4 sm:p-6 border-b border-neutral-border flex items-start gap-4">
-              <div className="sm:heddin  p-3 sm:p-4 bg-background rounded-sm flex items-center justify-center shrink-0">
+              <div className="sm:heddin p-3 sm:p-4 bg-background rounded-sm flex items-center justify-center shrink-0">
                 <New />
               </div>
               <div>
                 <Typography variant="title-md" className="font-semibold">
-                  Initialize New Project
+                  Edit Project
                 </Typography>
                 <Typography variant="body-md">
                   Define the scope and foundational details of your project.
@@ -120,13 +156,15 @@ export default function AddNewProject() {
               </div>
 
               <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 pt-4">
-                <Button
-                  variant="ghost"
-                  type="button"
-                  className="w-full sm:w-auto"
-                >
-                  Back
-                </Button>
+                <Link href="/project">
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    className="w-full sm:w-auto"
+                  >
+                    Back
+                  </Button>
+                </Link>
                 <Button
                   variant="primary"
                   type="submit"
@@ -134,9 +172,9 @@ export default function AddNewProject() {
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
-                    <div className="mr-2">creating...</div>
+                    <div className="mr-2">updating...</div>
                   ) : (
-                    <div>Create Project</div>
+                    <div>Save Changes</div>
                   )}
                 </Button>
               </div>

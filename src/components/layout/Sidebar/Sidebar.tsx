@@ -80,7 +80,7 @@ export default function Sidebar({
     {
       label: "Details",
       icon: <Details className="w-5 h-5 shrink-0" />,
-      href: `/project/${currentProjectId}/edite`,
+      href: `/project/${currentProjectId}/edit`,
     },
   ];
 

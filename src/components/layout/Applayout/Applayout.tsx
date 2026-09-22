@@ -11,13 +11,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
 
-  // 1. تحديد قائمة بمسارات صفحات الـ Auth
   const authRoutes = ["/logIn", "/sign-up", "/forgotPass", "/resetPass"];
 
-  // 2. التحقق مما إذا كان المستخدم في إحدى صفحات Auth
   const isAuthPage = authRoutes.some((route) => pathname.startsWith(route));
 
-  // 3. عرض المحتوى فقط بدون Sidebar/Navbar إذا كانت صفحة Auth
   if (isAuthPage) {
     return <main className="min-h-screen w-full bg-surface">{children}</main>;
   }

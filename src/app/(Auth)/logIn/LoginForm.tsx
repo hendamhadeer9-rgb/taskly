@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/Input";
 import { Typography } from "@/components/ui/Typography";
 import { loginSchema } from "./logIn.Schema";
 import { logInAction } from "./logIn.Actions";
-import Logo from "@/../public/Icon.svg"
+import Logo from "@/../public/Icon.svg";
 import Eyeoff from "@/../public/eyeoff.svg";
 import Eyeon from "@/../public/eyeon.svg";
 export type LoginFormValues = zod.infer<typeof loginSchema>;

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Typography } from "../../ui/Typography";
 import { getUserData } from "@/api/services/servicesApi";
-import Menu from "@/../public/menu.svg"
+import Menu from "@/../public/menu.svg";
 interface usertype {
   user_metadata: {
     name: string;
@@ -51,8 +51,7 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
           className="md:hidden"
           aria-label="Open sidebar"
         >
-          <Menu
-          />
+          <Menu />
         </button>
         <Typography variant="title-md" className="md:hidden  font-bold">
           TASKLY

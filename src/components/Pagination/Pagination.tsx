@@ -1,6 +1,6 @@
 import React from "react";
-import Left from "@/../public/left.svg"
-import Right from "@/../public/right.svg"
+import Left from "@/../public/left.svg";
+import Right from "@/../public/right.svg";
 
 export default function Pagination() {
   return (
@@ -39,7 +39,7 @@ export default function Pagination() {
 
         {/* Next Button */}
         <button className="w-8 h-8 flex items-center justify-center rounded-xs border border-neutral-border text-neutral-dark hover:bg-surface-highest">
-          <Right/>
+          <Right />
         </button>
       </div>
     </div>

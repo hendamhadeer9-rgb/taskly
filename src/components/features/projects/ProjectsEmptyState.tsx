@@ -1,20 +1,14 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Typography } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
+import Empty from "@/../public/empty.svg";
 
 export const ProjectsEmptyState = () => {
   return (
     <div className="flex flex-col items-center justify-center text-center py-16 px-4 max-w-md mx-auto">
-      {/* الصورة/الأيقونة الخاصة بالحالة الفارغة */}
       <div className="relative w-40 h-40 mb-6 flex items-center justify-center">
-        <Image
-          src="/empty.svg" // ضعي مسار صورة فيجما هنا
-          alt="No Projects"
-          width={288}
-          height={288}
-        />
+        <Empty className="w-72 h-72" />
       </div>
 
       {/* Title */}

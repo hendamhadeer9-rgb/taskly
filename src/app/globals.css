@@ -17,9 +17,8 @@
   --success: #82f9be;
   --error: #ba1a1a;
   --warning: #ffb300;
-  --nav-border: #0000001A;
+  --nav-border: #0000001a;
 
-  /* CSS Variables للأوزان 200 و 400 و 600 فقط */
   --font-weight-light: 200;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
@@ -29,7 +28,7 @@
 
 @theme {
   --font-sans: var(--font-inter);
-  
+
   --text-display-lg: 56px;
   --text-display-lg--line-height: 56px;
 
@@ -44,8 +43,7 @@
 
   --text-label-sm: 11px;
   --text-label-sm--line-height: 16.5px;
-  
-  /* ربط الأوزان المطلوبة بـ Tailwind */
+
   --font-weight-light: var(--font-weight-light);
   --font-weight-regular: var(--font-weight-regular);
   --font-weight-semibold: var(--font-weight-semibold);

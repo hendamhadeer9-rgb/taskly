@@ -15,12 +15,11 @@ interface MobileNavProps {
 export default function MobileNav({ activeProjectId }: MobileNavProps) {
   const pathname = usePathname();
 
-  // استخراج الـ projectId من الـ URL إن وجد أو استخدام القيمة القادمة من الـ Props
   const pathSegments = pathname.split("/");
   const currentProjectId =
     pathSegments[1] === "project" && pathSegments[2]
       ? pathSegments[2]
-      : activeProjectId ;
+      : activeProjectId;
 
   const navItems = [
     {
@@ -51,7 +50,7 @@ export default function MobileNav({ activeProjectId }: MobileNavProps) {
       id: "details",
       label: "Details",
       icon: <Details />,
-      href: `/project/${currentProjectId}/edite`,
+      href: `/project/${currentProjectId}/edit`,
     },
   ];
 

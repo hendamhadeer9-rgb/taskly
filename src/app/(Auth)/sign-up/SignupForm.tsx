@@ -12,7 +12,7 @@ import { registerAction } from "./signup.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Logo from "@/../public/Icon.svg"
+import Logo from "@/../public/Icon.svg";
 import Eyeoff from "@/../public/eyeoff.svg";
 import Eyeon from "@/../public/eyeon.svg";
 import Circle from "@/../public/circle.svg";
@@ -147,8 +147,8 @@ export default function SignupForm() {
                     className="absolute right-3 top-8 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
                   >
                     <div />
-                  {showPassword ? <Eyeon /> : <Eyeoff />}
-                  <div />
+                    {showPassword ? <Eyeon /> : <Eyeoff />}
+                    <div />
                   </button>
                 </div>
                 {errors.password && (
@@ -171,9 +171,7 @@ export default function SignupForm() {
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-8 text-neutral-muted hover:text-primary transition-colors cursor-pointer"
-                  >
-                    
-                  </button>
+                  ></button>
                 </div>
                 {errors.confirmPassword && (
                   <p className="text-xs text-error mt-1">
@@ -186,12 +184,8 @@ export default function SignupForm() {
             <div className="p-4 rounded-lg bg-condition-box space-y-2">
               {rules.map((rule) => (
                 <div key={rule.id} className="flex items-center gap-2">
-                  <div>
-                    {
-                      rule.isMet ? <Circle/> : <Check_circle/>
-                    }
-                  </div>
-                 
+                  <div>{rule.isMet ? <Circle /> : <Check_circle />}</div>
+
                   <Typography
                     variant="label-sm"
                     className=" text-neutral-muted"
