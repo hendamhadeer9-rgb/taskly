@@ -4,10 +4,11 @@ import { ProjectUpdateData } from "@/app/project/[id]/edit/page";
 import { ProjectFormData } from "@/app/project/add/page";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-const baseUrl =
-  process.env.BASE_URL || "https://yubvtliweecqbmsqmlrr.supabase.co";
-const apiKey =
-  process.env.API_KEY || "sb_publishable_oFcILbgYv5m9OURLvPGRqw_dAPaH8-P";
+  const baseUrl =
+    process.env.BASE_URL || "https://yubvtliweecqbmsqmlrr.supabase.co";
+  const apiKey =
+    process.env.API_KEY || "sb_publishable_oFcILbgYv5m9OURLvPGRqw_dAPaH8-P";
+  
 
 export async function getUserData() {
   const cookieStore = await cookies();
@@ -15,6 +16,7 @@ export async function getUserData() {
 
   if (!token) return null;
 
+ 
   try {
     const res = await fetch(`${baseUrl}/auth/v1/user`, {
       method: "GET",
@@ -42,7 +44,7 @@ export async function getUserData() {
 export async function addNewProject(data: ProjectFormData) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
-
+ 
   try {
     const response = await fetch(`${baseUrl}/rest/v1/projects`, {
       method: "POST",
@@ -70,6 +72,8 @@ export async function addNewProject(data: ProjectFormData) {
 export async function getProjects() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
+ 
+   
 
   try {
     const response = await fetch(`${baseUrl}/rest/v1/rpc/get_projects`, {
@@ -94,27 +98,25 @@ export async function getProjects() {
   }
 }
 
+
 export async function getProjectById(projectId: string) {
-  const cookieStore = await cookies();
+  const cookieStore = await cookies(); 
   const token = cookieStore.get("token")?.value;
 
   try {
-    const response = await fetch(
-      `${baseUrl}/rest/v1/projects?id=eq.${projectId}`,
-      {
-        method: "GET",
-        headers: {
-          apikey: apiKey,
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+    const response = await fetch(`${baseUrl}/rest/v1/projects?id=eq.${projectId}`, {
+      method: "GET",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-    );
+    });
 
     if (response.ok) {
       const data = await response.json();
-
-      return data[0];
+      
+      return data[0] ; 
     }
     return null;
   } catch (error) {
@@ -123,30 +125,27 @@ export async function getProjectById(projectId: string) {
   }
 }
 
-export async function updateProject(
-  projectId: string,
-  data: ProjectUpdateData,
-) {
-  const cookieStore = await cookies();
+
+export async function updateProject (projectId: string,data : ProjectUpdateData){
+    const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   try {
-    const response = await fetch(
-      `${baseUrl}/rest/v1/projects?id=eq.${projectId}`,
-      {
-        method: "PATCH",
-        headers: {
-          apikey: apiKey,
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Prefer: "return=representation",
-        },
-        body: JSON.stringify({
-          name: data.title,
-          description: data.description,
-        }),
+    const response = await fetch(`${baseUrl}/rest/v1/projects?id=eq.${projectId}`,{
+      method:"PATCH",
+      headers:{
+        apikey: apiKey,
+Authorization: `Bearer ${token}`,
+"Content-Type": "application/json",
+"Prefer": "return=representation",
       },
-    );
-    if (response.ok) {
+       body: JSON.stringify({
+        name: data.title,
+        description: data.description,
+        
+      }),
+      
+    })
+     if (response.ok) {
       const data = await response.json();
       return { success: true, data };
     }
