@@ -16,7 +16,7 @@ const variantStyles: Record<TypographyVariant, string> = {
   "title-md": "text-[18px] leading-[27px] font-medium text-neutral-dark",
   "body-md": "text-[14px] leading-[22.75px] font-normal text-neutral-muted",
   "label-sm":
-    "text-[11px] leading-[16.5px] font-bold uppercase text-neutral-dark",
+    "text-label-sm leading-[16.5px] font-bold uppercase text-neutral-dark",
 };
 
 export function Typography({ variant, children, className }: TypographyProps) {

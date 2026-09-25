@@ -6,31 +6,28 @@ import Empty from "@/../public/empty.svg";
 
 export const ProjectsEmptyState = () => {
   return (
-    <div className="flex flex-col items-center justify-center text-center py-16 px-4 max-w-md mx-auto">
-      <div className="relative w-40 h-40 mb-6 flex items-center justify-center">
-        <Empty className="w-72 h-72" />
+    <div className="flex flex-col items-center justify-center text-center py-12 px-4 max-w-lg mx-auto w-full">
+      <div className="w-full max-w-70 sm:max-w-[320px] aspect-square mb-6 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full [&>svg]:object-contain">
+        <Empty />
       </div>
 
-      {/* Title */}
       <Typography
         variant="headline-lg"
-        className="font-bold text-neutral-900 mb-2"
+        className="font-bold text-neutral-dark mb-2"
       >
         No Projects
       </Typography>
 
-      {/* Subtitle */}
       <Typography
         variant="body-md"
-        className="text-neutral-muted mb-6 leading-relaxed"
+        className="text-neutral-muted mb-6 leading-relaxed max-w-md"
       >
         You do not have any projects yet. Start by defining your first
         architectural workspace to begin tracking tasks and epics.
       </Typography>
 
-      {/* Create Button */}
       <Link href="/project/add">
-        <Button variant="primary" className="px-6 py-2.5">
+        <Button className="px-6 py-2.5 bg-Primary-Gradient cursor-pointer">
           Create New Project
         </Button>
       </Link>

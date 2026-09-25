@@ -189,7 +189,6 @@ export default function Sidebar({
                 )}
               </button>
 
-              {/* حالة 1: القائمة المنسدلة العادية عندما يكون السايدبار مفتوحاً (Expanded) */}
               {!isCollapsed && isProjectOpen && (
                 <div className="flex flex-col gap-1 py-1 bg-white rounded-b-sm">
                   {projectSubItems.map((subItem) => {
@@ -213,7 +212,6 @@ export default function Sidebar({
                 </div>
               )}
 
-              {/* حالة 2: القائمة المنبثقة عند الـ Hover فقط عندما يكون السايدبار مقفولاً (Collapsed) */}
               {isCollapsed && (
                 <div className="absolute left-full top-0 ml-4 w-48 bg-surface-highest rounded-tr-sm rounded-br-sm p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-110 flex flex-col gap-1 ">
                   {projectSubItems.map((subItem) => {

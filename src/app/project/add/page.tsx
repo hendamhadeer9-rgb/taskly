@@ -98,7 +98,7 @@ export default function AddNewProject() {
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <label className="block text-[11px] font-bold text-neutral-muted uppercase tracking-wider">
+                  <label className="block text-label-sm font-bold text-neutral-muted uppercase tracking-wider">
                     <Typography
                       variant="label-sm"
                       className="text-neutral-muted"

@@ -44,7 +44,7 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const avatarLetter = getAvatarLetters(userName);
 
   return (
-    <header className="h-20 md:h-16 w-full border-b border-b-nav-border bg-white px-6 py-4 flex items-center justify-between">
+    <header className="sticky top-0 z-50 h-20 md:h-16 w-full border-b border-b-nav-border bg-white px-6 py-4 flex items-center justify-between">
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}

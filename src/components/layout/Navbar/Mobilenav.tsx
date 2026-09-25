@@ -20,6 +20,7 @@ export default function MobileNav({ activeProjectId }: MobileNavProps) {
     pathSegments[1] === "project" && pathSegments[2]
       ? pathSegments[2]
       : activeProjectId;
+  const isProjectsSection = pathname.startsWith("/project") && currentProjectId;
 
   const navItems = [
     {
@@ -55,29 +56,33 @@ export default function MobileNav({ activeProjectId }: MobileNavProps) {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white shadow-lg md:hidden">
-      <div className="flex items-center justify-around py-2 px-3">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
+    <>
+      {isProjectsSection && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white shadow-lg md:hidden">
+          <div className="flex items-center justify-around py-2 px-3">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
 
-          return (
-            <Link
-              key={item.id}
-              href={item.href}
-              className={`flex flex-col items-center justify-center min-w-12.5 transition-colors ${
-                isActive
-                  ? "font-semibold text-primary [&_path]:fill-primary"
-                  : "text-neutral-dark hover:text-primary [&_path]:fill-neutral-dark hover:[&_path]:fill-primary"
-              }`}
-            >
-              <div className="w-5 h-5 flex items-center justify-center">
-                {item.icon}
-              </div>
-              <span className="mt-1 text-label-sm">{item.label}</span>
-            </Link>
-          );
-        })}
-      </div>
-    </div>
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={`flex flex-col items-center justify-center min-w-12.5 transition-colors ${
+                    isActive
+                      ? "font-semibold text-primary [&_path]:fill-primary"
+                      : "text-neutral-dark hover:text-primary [&_path]:fill-neutral-dark hover:[&_path]:fill-primary"
+                  }`}
+                >
+                  <div className="w-5 h-5 flex items-center justify-center">
+                    {item.icon}
+                  </div>
+                  <span className="mt-1 text-label-sm">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

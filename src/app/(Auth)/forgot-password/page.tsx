@@ -21,7 +21,7 @@ export default function Page() {
   const route = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(300); // 5 دقائق
+  const [timeLeft, setTimeLeft] = useState(300);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [resendAttempts, setResendAttempts] = useState(0);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -42,7 +42,6 @@ export default function Page() {
 
   const emailValue = watch("email");
 
-  // إدارة العداد التنازلي
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isTimerRunning && timeLeft > 0) {
@@ -62,23 +61,30 @@ export default function Page() {
   };
 
   const onSubmit = async (data: ForgotFormValues) => {
-    if (isLoading || isSubmitting) return; // منع التكرار
+    if (
+      isLoading ||
+      isSubmitting ||
+      resendAttempts >= maxAttempts ||
+      isTimerRunning
+    )
+      return;
 
     setIsLoading(true);
     try {
       const emailSent = await forgotPasswordAction(data);
 
-      if (emailSent && emailSent.success) {
-        toast.success("If an account exists, a reset link has been sent.");
+      if (emailSent) {
+        setResendAttempts((prev) => prev + 1);
         setTimeLeft(300);
         setIsTimerRunning(true);
         setHasSubmitted(true);
       } else {
-        toast.error( "Unable to send reset email. Please try again.");
+        toast.error("Unable to send reset email. Please try again.");
       }
     } catch (error) {
-      // معالجة أخطاء الشبكة أو السيرفر دون إظهار تفاصيل تقنية حساسة
-      toast.error("An unexpected network or server error occurred. Please try again later.");
+      toast.error(
+        "An unexpected network or server error occurred. Please try again later.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +97,7 @@ export default function Page() {
     try {
       const emailSent = await forgotPasswordAction({ email: emailValue });
 
-      if (emailSent && emailSent.success) {
+      if (emailSent) {
         toast.success("Reset link resent successfully.");
         setResendAttempts((prev) => prev + 1);
         setTimeLeft(300);
@@ -107,7 +113,10 @@ export default function Page() {
   };
 
   const remainingAttempts = maxAttempts - resendAttempts;
+  const isMaxAttemptsReached = resendAttempts >= maxAttempts;
   const isPending = isLoading || isSubmitting;
+
+  const isButtonDisabled = isPending || isTimerRunning || isMaxAttemptsReached;
 
   return (
     <div className="w-full bg-Surface-Low flex flex-col justify-between p-4 sm:p-8 min-h-screen">
@@ -140,7 +149,7 @@ export default function Page() {
               type="email"
               label="Email address"
               placeholder="Enter your email"
-              disabled={isPending}
+              disabled={isButtonDisabled}
               {...register("email")}
             />
             {errors.email && (
@@ -149,10 +158,16 @@ export default function Page() {
 
             <Button
               type="submit"
-              disabled={isPending}
+              disabled={isButtonDisabled}
               className="w-full mt-2 bg-Primary-Gradient disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
-              {isPending ? "Sending..." : "Send Reset Link"}
+              {isPending
+                ? "Sending..."
+                : isMaxAttemptsReached
+                  ? "Max attempts reached"
+                  : isTimerRunning
+                    ? "Wait "
+                    : "Send Reset Link"}
             </Button>
 
             <Link href="/logIn">
@@ -183,12 +198,12 @@ export default function Page() {
 
           <div className="border-t border-nav-border my-1" />
 
-          <div className="flex items-center justify-between pt-2 text-[11px] font-bold tracking-wider">
+          <div className="flex items-center justify-between pt-2 text-label-sm font-bold tracking-wider">
             <span className="text-green/60 uppercase">
               DIDN'T RECEIVE EMAIL?
             </span>
 
-            {resendAttempts >= maxAttempts ? (
+            {isMaxAttemptsReached ? (
               <span className="text-error uppercase">
                 MAX RESEND ATTEMPTS REACHED
               </span>
@@ -210,7 +225,7 @@ export default function Page() {
                 <button
                   type="button"
                   onClick={handleResend}
-                  disabled={isPending}
+                  disabled={isButtonDisabled}
                   className="text-primary uppercase hover:underline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isPending ? "RESENDING..." : "RESEND"}

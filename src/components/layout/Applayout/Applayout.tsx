@@ -11,7 +11,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
 
-  const authRoutes = ["/logIn", "/sign-up", "/forgot-password", "/resetPass"];
+  const authRoutes = [
+    "/logIn",
+    "/sign-up",
+    "/forgot-password",
+    "/reset-password",
+  ];
 
   const isAuthPage = authRoutes.some((route) => pathname.startsWith(route));
 
