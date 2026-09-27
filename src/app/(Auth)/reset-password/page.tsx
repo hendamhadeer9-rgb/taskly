@@ -111,15 +111,11 @@ export default function ResetPasswordForm() {
         router.push("/logIn");
       }, 3000);
     } else {
-      console.log("Supabase Error Details:", result.error);
+  
 
-      const errorMessage =
-        result.error?.msg ||
-        result.error?.message ||
-        result.error?.error_description ||
-        "Failed to update password. Please try again.";
+      
 
-      toast.error(errorMessage);
+      toast.error("errorMessage");
     }
   };
 
