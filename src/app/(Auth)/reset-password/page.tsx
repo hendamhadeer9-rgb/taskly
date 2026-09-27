@@ -27,9 +27,16 @@ export default function ResetPasswordForm() {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isCheckingToken, setIsCheckingToken] = useState(true);
   const [isTokenInvalid, setIsTokenInvalid] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     const hash = window.location.hash;
     const params = new URLSearchParams(hash.replace("#", ""));
 
@@ -46,7 +53,7 @@ export default function ResetPasswordForm() {
     }
 
     setIsCheckingToken(false);
-  }, []);
+  }, [isMounted]);
 
   const {
     register,
@@ -98,7 +105,7 @@ export default function ResetPasswordForm() {
 
     if (result.success) {
       toast.success(
-        "Your password has been updated successfully. You can now log in",
+        "Your password has been updated successfully. You can now log in"
       );
       setTimeout(() => {
         router.push("/logIn");
@@ -106,17 +113,17 @@ export default function ResetPasswordForm() {
     } else {
       console.log("Supabase Error Details:", result.error);
 
-  const errorMessage =
-    result.error?.msg ||
-    result.error?.message ||
-    result.error?.error_description ||
-    "Failed to update password. Please try again.";
+      const errorMessage =
+        result.error?.msg ||
+        result.error?.message ||
+        result.error?.error_description ||
+        "Failed to update password. Please try again.";
 
-  toast.error(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
-  if (isCheckingToken) {
+  if (!isMounted || isCheckingToken) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-Surface-Low">
         <Typography variant="body-md" className="text-neutral-muted">
@@ -167,7 +174,7 @@ export default function ResetPasswordForm() {
       </header>
 
       <main className="flex-1 flex items-center justify-center py-6 sm:py-10">
-        <div className="w-lg  bg-white rounded-lg sm:shadow-card sm:border sm:border-neutral-border/20 p-6 sm:p-12 space-y-6">
+        <div className="w-lg bg-white rounded-lg sm:shadow-card sm:border sm:border-neutral-border/20 p-6 sm:p-12 space-y-6">
           <div className="text-center space-y-2">
             <Typography
               variant="headline-lg"
@@ -231,7 +238,7 @@ export default function ResetPasswordForm() {
               {rules.map((rule) => (
                 <div
                   key={rule.id}
-                  className="flex items-center gap-2 text-label-sm  "
+                  className="flex items-center gap-2 text-label-sm "
                 >
                   <div>{rule.isMet ? <Check_circle /> : <Circle />}</div>
                   <Typography
