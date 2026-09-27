@@ -5,9 +5,9 @@ import { ProjectFormData } from "@/app/project/add/page";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 const baseUrl =
-  process.env.BASE_URL || "https://yubvtliweecqbmsqmlrr.supabase.co";
-const apiKey =
-  process.env.API_KEY || "sb_publishable_oFcILbgYv5m9OURLvPGRqw_dAPaH8-P";
+    process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const apiKey =
+    process.env.NEXT_PUBLIC_SUPABASE_KEY!;
 
 export async function getUserData() {
   const cookieStore = await cookies();

@@ -2,13 +2,8 @@
 import { ForgotFormValues } from "./page";
 
 export async function forgotPasswordAction(data: ForgotFormValues) {
-  const baseUrl =
-    process.env.BASE_URL || "https://yubvtliweecqbmsqmlrr.supabase.co";
-  const apiKey =
-    process.env.API_KEY || "sb_publishable_oFcILbgYv5m9OURLvPGRqw_dAPaH8-P";
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const redirectTo = `${siteUrl}/reset-password`;
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const apiKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
 
   try {
     const response = await fetch(`${baseUrl}/auth/v1/recover`, {
@@ -19,7 +14,6 @@ export async function forgotPasswordAction(data: ForgotFormValues) {
       },
       body: JSON.stringify({
         email: data.email,
-        redirect_to: redirectTo,
       }),
     });
 

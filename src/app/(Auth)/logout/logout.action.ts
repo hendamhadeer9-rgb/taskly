@@ -2,10 +2,10 @@
 import { cookies } from "next/headers";
 
 export async function logoutAction() {
-  const baseUrl =
-    process.env.BASE_URL || "https://yubvtliweecqbmsqmlrr.supabase.co";
+   const baseUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL;
   const apiKey =
-    process.env.API_KEY || "sb_publishable_oFcILbgYv5m9OURLvPGRqw_dAPaH8-P";
+    process.env.NEXT_PUBLIC_SUPABASE_KEY!;
 
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;

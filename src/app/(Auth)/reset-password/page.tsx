@@ -90,13 +90,13 @@ export default function ResetPasswordForm() {
       return;
     }
 
-    const isSuccess = await resetAction({
+    const result = await resetAction({
       password: data.password,
       confirmPassword: data.confirmPassword,
       token: accessToken,
     });
 
-    if (isSuccess) {
+    if (result.success) {
       toast.success(
         "Your password has been updated successfully. You can now log in",
       );

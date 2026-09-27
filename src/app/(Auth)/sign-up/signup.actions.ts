@@ -4,9 +4,9 @@ import { RegisterFormValues } from "./SignupForm";
 
 export async function registerAction(data: RegisterFormValues) {
   const baseUrl =
-    process.env.BASE_URL || "https://yubvtliweecqbmsqmlrr.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_URL;
   const apiKey =
-    process.env.API_KEY || "sb_publishable_oFcILbgYv5m9OURLvPGRqw_dAPaH8-P";
+    process.env.NEXT_PUBLIC_SUPABASE_KEY!;
 
   try {
     const res = await fetch(`${baseUrl}/auth/v1/signup`, {

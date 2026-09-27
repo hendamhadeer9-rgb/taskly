@@ -166,7 +166,7 @@ export default function Page() {
                 : isMaxAttemptsReached
                   ? "Max attempts reached"
                   : isTimerRunning
-                    ? "Wait "
+                    ? "link sent "
                     : "Send Reset Link"}
             </Button>
 
