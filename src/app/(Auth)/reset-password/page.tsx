@@ -24,36 +24,38 @@ export type resetFormValues = zod.infer<typeof resetSchema>;
 export default function ResetPasswordForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isCheckingToken, setIsCheckingToken] = useState(true);
   const [isTokenInvalid, setIsTokenInvalid] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted) return;
-
+    // 1. قراءة الـ Hash مباشرة من شريط العنوان في الكلاينت
     const hash = window.location.hash;
-    const params = new URLSearchParams(hash.replace("#", ""));
 
-    const token = params.get("access_token");
-    const type = params.get("type");
-    const error = params.get("error");
-    const errorCode = params.get("error_code");
+    if (hash && hash.includes("access_token")) {
+      const params = new URLSearchParams(hash.replace("#", ""));
+      const token = params.get("access_token");
+      const type = params.get("type");
+      const error = params.get("error");
 
-    if (error || errorCode || (type && type !== "recovery") || !token) {
-      setIsTokenInvalid(true);
+      // 2. التحقق من صحة التوكين وأن نوعه recovery
+      if (token && !error && (type === "recovery" || !type)) {
+        setAccessToken(token);
+        setIsTokenInvalid(false);
+
+        // 3. مسح الـ Hash من الـ URL لأمان التطبيق دون عمل Reload
+        window.history.replaceState(null, "", window.location.pathname);
+      } else {
+        setIsTokenInvalid(true);
+      }
     } else {
-      setAccessToken(token);
-      setIsTokenInvalid(false);
+      setIsTokenInvalid(true);
     }
 
     setIsCheckingToken(false);
-  }, [isMounted]);
+  }, []);
 
   const {
     register,
@@ -92,30 +94,41 @@ export default function ResetPasswordForm() {
   ];
 
   const onSubmit = async (data: resetFormValues) => {
-    if (!accessToken || isTokenInvalid) {
-      toast.error("Invalid or expired reset link.");
+    if (!accessToken) {
+      toast.error("Invalid or expired reset link. Please request a new one.");
       return;
     }
 
-    const result = await resetAction({
-      password: data.password,
-      confirmPassword: data.confirmPassword,
-      token: accessToken,
-    });
+    try {
+      const result = await resetAction({
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        token: accessToken,
+      });
 
-    if (result.success) {
-      toast.success(
-        "Your password has been updated successfully. You can now log in",
-      );
-      setTimeout(() => {
-        router.push("/login");
-      }, 3000);
-    } else {
-      toast.error("please try again");
+      if (result && result.success) {
+        toast.success(
+          "Your password has been updated successfully. You can now log in"
+        );
+        setTimeout(() => {
+          router.push("/logIn");
+        }, 2000);
+      } else {
+        // طباعة رسالة الخطأ القادمة من السيرفر أو Supabase بدقة
+        const errorMsg =
+          result?.error?.msg ||
+          result?.error?.message ||
+          result?.error?.error_description ||
+          "Failed to update password. Please request a new link.";
+        toast.error(errorMsg);
+      }
+    } catch (err) {
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
-  if (!isMounted || isCheckingToken) {
+  // شاشة الانتظار لمنع الـ Hydration Error
+  if (isCheckingToken) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-Surface-Low">
         <Typography variant="body-md" className="text-neutral-muted">
@@ -125,6 +138,7 @@ export default function ResetPasswordForm() {
     );
   }
 
+  // إذا كان الرابط غير صالح أو التوكين مش موجود
   if (isTokenInvalid || !accessToken) {
     return (
       <div className="min-h-screen w-full bg-Surface-Low flex flex-col justify-between p-4 sm:p-8">
@@ -226,7 +240,7 @@ export default function ResetPasswordForm() {
                 <Typography variant="label-sm" className="text-label-sm ">
                   Security Requirements
                 </Typography>
-              </div>{" "}
+              </div>
               {rules.map((rule) => (
                 <div
                   key={rule.id}
@@ -255,7 +269,7 @@ export default function ResetPasswordForm() {
               {isSubmitting ? "Updating..." : "Update Password"}
             </Button>
 
-            <Link href="/login">
+            <Link href="/logIn">
               <Button variant="ghost" className="w-full mt-2" type="button">
                 <div className="flex justify-center gap-2 text-primary">
                   <Back className="mt-0.5" />
