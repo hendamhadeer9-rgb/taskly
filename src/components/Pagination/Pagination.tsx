@@ -5,7 +5,7 @@ import Right from "@/../public/right.svg";
 export default function Pagination() {
   return (
     <div>
-      <div className="flex items-center justify-end gap-2 mt-8 py-4">
+      <div className="flex items-center justify-end gap-2 mt-auto py-4">
         {/* Previous Button */}
 
         <button className="w-8 h-8 flex items-center justify-center rounded-xs border border-neutral-border text-neutral-muted hover:bg-surface-highest disabled:opacity-50 disabled:cursor-not-allowed">

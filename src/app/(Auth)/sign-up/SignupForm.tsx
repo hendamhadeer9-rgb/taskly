@@ -67,7 +67,7 @@ export default function SignupForm() {
     const isRegistered = await registerAction(data);
     if (isRegistered) {
       toast.success("Email created successfully");
-      route.push("/logIn");
+      route.push("/login");
     } else {
       toast.error("User already registered");
     }
@@ -208,7 +208,7 @@ export default function SignupForm() {
             >
               Already have an account?{" "}
               <Link
-                href="/logIn"
+                href="/login"
                 className="text-primary font-bold hover:underline"
               >
                 Log in

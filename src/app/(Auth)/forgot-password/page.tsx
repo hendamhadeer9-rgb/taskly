@@ -170,7 +170,7 @@ export default function Page() {
                     : "Send Reset Link"}
             </Button>
 
-            <Link href="/logIn">
+            <Link href="/login">
               <Button
                 variant="ghost"
                 className="w-full mt-2"

@@ -105,17 +105,13 @@ export default function ResetPasswordForm() {
 
     if (result.success) {
       toast.success(
-        "Your password has been updated successfully. You can now log in"
+        "Your password has been updated successfully. You can now log in",
       );
       setTimeout(() => {
-        router.push("/logIn");
+        router.push("/login");
       }, 3000);
     } else {
-  
-
-      
-
-      toast.error("errorMessage");
+      toast.error("please try again");
     }
   };
 
@@ -259,7 +255,7 @@ export default function ResetPasswordForm() {
               {isSubmitting ? "Updating..." : "Update Password"}
             </Button>
 
-            <Link href="/logIn">
+            <Link href="/login">
               <Button variant="ghost" className="w-full mt-2" type="button">
                 <div className="flex justify-center gap-2 text-primary">
                   <Back className="mt-0.5" />

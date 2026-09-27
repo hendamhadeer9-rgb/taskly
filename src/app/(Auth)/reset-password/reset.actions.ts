@@ -8,15 +8,14 @@ export type ResetPayload = resetFormValues & {
 
 export async function resetAction(data: ResetPayload) {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  // تأكدي من تطابق اسم المتغير مع ملف .env الخاص بك
-  const apiKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
 
   try {
     const response = await fetch(`${baseUrl}/auth/v1/user`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        apikey: apiKey!,
+        apikey: apiKey,
         Authorization: `Bearer ${data.token}`,
       },
       body: JSON.stringify({
@@ -26,7 +25,7 @@ export async function resetAction(data: ResetPayload) {
 
     const finalRes = await response.json();
 
-    if (response.ok && !finalRes.error) {
+    if (response.ok) {
       return { success: true, data: finalRes };
     }
 

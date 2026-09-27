@@ -90,7 +90,7 @@ export default function Sidebar({
       onClose();
       const logout = await logoutAction();
       if (logout) {
-        router.push("/logIn");
+        router.push("/login");
         router.refresh();
         toast.success("Logged out successfully");
       }

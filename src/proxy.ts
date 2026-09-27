@@ -5,7 +5,7 @@ export function proxy(request: NextRequest) {
   const accessToken = request.cookies.get("token")?.value;
 
   if (!accessToken) {
-    return NextResponse.redirect(new URL("/logIn", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();

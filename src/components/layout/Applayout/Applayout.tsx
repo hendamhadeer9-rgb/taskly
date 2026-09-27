@@ -12,7 +12,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const authRoutes = [
-    "/logIn",
+    "/login",
     "/sign-up",
     "/forgot-password",
     "/reset-password",
