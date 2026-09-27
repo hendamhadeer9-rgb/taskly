@@ -3,7 +3,7 @@
 import { LoginFormValues } from "./LoginForm";
 import { cookies } from "next/headers";
 
-export async function logInAction(data: LoginFormValues) {
+export async function loginAction(data: LoginFormValues) {
    const baseUrl =
     process.env.NEXT_PUBLIC_SUPABASE_URL;
   const apiKey =

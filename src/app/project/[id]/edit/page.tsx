@@ -25,10 +25,9 @@ interface PageProps {
 export default function EditProject({ params }: PageProps) {
   const resolvedParams = use(params);
   const router = useRouter();
-  const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const projectId = resolvedParams?.id || pathname.split("/")[2];
+  const projectId = resolvedParams?.id 
 
   const {
     register,

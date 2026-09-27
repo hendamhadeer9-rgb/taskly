@@ -112,7 +112,7 @@ export default function ResetPasswordForm() {
         );
         setTimeout(() => {
           router.push("/login");
-        }, 2000);
+        }, 3000);
       } else {
         // طباعة رسالة الخطأ القادمة من السيرفر أو Supabase بدقة
         const errorMsg =

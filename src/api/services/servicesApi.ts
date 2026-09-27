@@ -156,3 +156,34 @@ export async function updateProject(
     return { success: false, data: [] };
   }
 }
+
+
+export async function membersList(projectId: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  try {
+    const response = await fetch(
+      `${baseUrl}/rest/v1/get_project_members?project_id=eq.${projectId}`,
+      {
+        method: "GET",
+        headers: {
+          apikey: apiKey,
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log("members123",data)
+
+      return data;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching members:", error);
+    return null;
+  }
+}
