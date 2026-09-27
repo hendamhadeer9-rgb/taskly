@@ -104,7 +104,15 @@ export default function ResetPasswordForm() {
         router.push("/logIn");
       }, 3000);
     } else {
-      toast.error("Failed to update password. Please try again.");
+      console.log("Supabase Error Details:", result.error);
+
+  const errorMessage =
+    result.error?.msg ||
+    result.error?.message ||
+    result.error?.error_description ||
+    "Failed to update password. Please try again.";
+
+  toast.error(errorMessage);
     }
   };
 

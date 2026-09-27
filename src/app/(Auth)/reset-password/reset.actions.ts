@@ -7,18 +7,17 @@ export type ResetPayload = resetFormValues & {
 };
 
 export async function resetAction(data: ResetPayload) {
-   const baseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const apiKey =
-    process.env.NEXT_PUBLIC_SUPABASE_KEY!;
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  // تأكدي من تطابق اسم المتغير مع ملف .env الخاص بك
+  const apiKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
 
   try {
     const response = await fetch(`${baseUrl}/auth/v1/user`, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${data.token}`,
-        apikey: apiKey,
         "Content-Type": "application/json",
+        apikey: apiKey!,
+        Authorization: `Bearer ${data.token}`,
       },
       body: JSON.stringify({
         password: data.password,
@@ -27,7 +26,7 @@ export async function resetAction(data: ResetPayload) {
 
     const finalRes = await response.json();
 
-    if (response.ok) {
+    if (response.ok && !finalRes.error) {
       return { success: true, data: finalRes };
     }
 
