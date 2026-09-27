@@ -111,7 +111,7 @@ export default function ResetPasswordForm() {
           "Your password has been updated successfully. You can now log in"
         );
         setTimeout(() => {
-          router.push("/logIn");
+          router.push("/login");
         }, 2000);
       } else {
         // طباعة رسالة الخطأ القادمة من السيرفر أو Supabase بدقة
@@ -269,7 +269,7 @@ export default function ResetPasswordForm() {
               {isSubmitting ? "Updating..." : "Update Password"}
             </Button>
 
-            <Link href="/logIn">
+            <Link href="/login">
               <Button variant="ghost" className="w-full mt-2" type="button">
                 <div className="flex justify-center gap-2 text-primary">
                   <Back className="mt-0.5" />
