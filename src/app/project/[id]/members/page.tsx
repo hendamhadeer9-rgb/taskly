@@ -4,7 +4,7 @@ import React, { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Typography } from "@/components/ui/Typography";
-import { membersList } from "@/api/services/servicesApi";
+import { getProjectById, membersList } from "@/api/services/servicesApi";
 import Invite from "@/../../public/invite.svg"
 import MemberListTable, { Member } from "@/components/features/members/MemberListTable";
 import { ProjectsErrorState } from "@/components/features/projects/ProjectsErrorState";
@@ -22,6 +22,10 @@ export default function Page({ params }: PageProps) {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [projectName, setProjectName] = useState<string>("")
+
+
+ 
 
   const fetchMembers = async () => {
     if (!projectId) return;
@@ -30,12 +34,15 @@ export default function Page({ params }: PageProps) {
     setError(false);
 
     try {
+       const project = await getProjectById(projectId);
+      
       const data = await membersList(projectId);
       if (data === null) {
         setError(true)
         return;
       }
       setMembers(data );
+      setProjectName(project.name);
     } catch (err) {
       console.error("Failed to fetch members:", err);
       setError(true);
@@ -62,7 +69,7 @@ export default function Page({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-Surface-Low p-6 md:p-10 space-y-6 max-w-[1200px] mx-auto">
+    <div className="min-h-screen bg-Surface-Low p-6 md:p-10 space-y-6 max-w-300 mx-auto">
       {/* Breadcrumbs */}
       <nav className="hidden sm:flex items-center gap-2 text-xs font-bold text-neutral-muted/60">
         <Link
@@ -76,7 +83,7 @@ export default function Page({ params }: PageProps) {
           href={`/project/${projectId}`}
           className=" uppercase tracking-wider"
         >
-          Project Name
+          {projectName}
         </Link>
         <span>/</span>
         <span className=" font-medium uppercase text-primary tracking-wider">

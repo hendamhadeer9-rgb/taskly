@@ -9,7 +9,6 @@ export interface Member {
   name: string;
   email: string;
   role: string;
-  is_owner: boolean;
   isOwner: boolean;
   metadata: {
     name: string;
