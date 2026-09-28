@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Typography } from "../../ui/Typography";
@@ -19,6 +19,7 @@ import Details from "@/../public/details.svg";
 import Collaps from "@/../public/collaps.svg";
 import Uncollaps from "@/../public/uncollaps.svg";
 import Logout from "@/../public/logout.svg";
+import { getProjectById } from "@/api/services/servicesApi";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -39,6 +40,7 @@ export default function Sidebar({
   const router = useRouter();
   const [isProjectOpen, setIsProjectOpen] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [projectName, setProjectName] = useState<string>("");
 
   const pathSegments = pathname.split("/");
   const currentProjectId =
@@ -47,6 +49,22 @@ export default function Sidebar({
       : activeProjectId;
 
   const isProjectsSection = pathname.startsWith("/project") && currentProjectId;
+
+  useEffect(() => {
+    async function fetchProjectName() {
+      if (!currentProjectId) return;
+      try {
+        const project = await getProjectById(currentProjectId);
+        if (project?.name) {
+          setProjectName(project.name);
+        }
+      } catch (error) {
+        console.error("Failed to fetch project name:", error);
+      }
+    }
+
+    fetchProjectName();
+  }, [currentProjectId]);
 
   const mainNavItems = [
     {
@@ -173,7 +191,7 @@ export default function Sidebar({
                   <Folder className="w-5 h-5 shrink-0" />
                   {!isCollapsed && (
                     <span className="truncate max-w-32.5">
-                      Active Project Name
+                      {projectName}
                     </span>
                   )}
                 </div>
