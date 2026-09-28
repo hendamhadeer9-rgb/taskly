@@ -19,7 +19,7 @@ const variantStyles: Record<ButtonVariant, string> = {
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  default: "h-10 px-4 py-2 text-sm",
+  default: "h-10 px-2 py-2 text-sm",
   sm: "h-8 px-3 text-xs",
   lg: "h-12 px-6 text-base",
 };

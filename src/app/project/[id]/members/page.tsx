@@ -1,103 +1,127 @@
 "use client";
 
-import React, { use, useState } from "react";
+import React, { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Typography } from "@/components/ui/Typography";
-import { membersList } from "@/api/services/servicesApi";
+import { getProjectById, membersList } from "@/api/services/servicesApi";
+import Invite from "@/../../public/invite.svg"
+import MemberListTable, { Member } from "@/components/features/members/MemberListTable";
+import { ProjectsErrorState } from "@/components/features/projects/ProjectsErrorState";
 
 interface PageProps {
   params: Promise<{
     id: string;
-  }>;}
+  }>;
+}
 
-  
+export default function Page({ params }: PageProps) {
+  const resolvedParams = use(params);
+  const projectId = resolvedParams?.id;
 
-export default function page({ params }: PageProps) {
-    const resolvedParams = use(params);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [assignee, setAssignee] = useState("");
-  const [targetDate, setTargetDate] = useState("");
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [projectName, setProjectName] = useState<string>("")
 
-   const projectId = resolvedParams?.id 
 
-   
+ 
 
-  return (<></>
-    // <div className="min-h-screen bg-Surface-Low p-6 md:p-10 space-y-6 max-w-[1200px] mx-auto">
-    //   {/* Breadcrumbs */}
-    //   <nav className="flex items-center gap-2 text-xs text-neutral-muted">
-    //     <Link href="/projects" className="hover:underline uppercase tracking-wider">
-    //       Projects
-    //     </Link>
-    //     <span>/</span>
-    //     <Link href="/projects/product-name" className="hover:underline uppercase tracking-wider">
-    //       Project Name
-    //     </Link>
-    //     <span>/</span>
-    //     <span className="text-neutral-dark font-medium uppercase tracking-wider">
-    //       Members
-    //     </span>
-    //   </nav>
+  const fetchMembers = async () => {
+    if (!projectId) return;
+    
+    setLoading(true);
+    setError(false);
 
-    //   {/* Header & Action Button */}
-    //   <div className="flex items-center justify-between">
-    //     <Typography variant="headline-lg" className="font-bold text-neutral-dark">
-    //       Project Members
-    //     </Typography>
+    try {
+       const project = await getProjectById(projectId);
+      
+      const data = await membersList(projectId);
+      if (data === null) {
+        setError(true)
+        return;
+      }
+      setMembers(data );
+      setProjectName(project.name);
+    } catch (err) {
+      console.error("Failed to fetch members:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    //     <Button className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium">
-    //       <span>+</span> Invite Members
-    //     </Button>
-    //   </div>
+  useEffect(() => {
+    fetchMembers();
+  }, [projectId]);
 
-    //   {/* Main Members Card / Table Container */}
-    //   <div className="bg-white rounded-xl border border-neutral-border/40 shadow-sm overflow-hidden max-w-[577px]">
-    //     {/* Table Header */}
-    //     <div className="grid grid-cols-12 px-6 py-3 border-b border-neutral-border/20 text-[11px] font-semibold text-neutral-muted uppercase tracking-wider">
-    //       <div className="col-span-8">Member</div>
-    //       <div className="col-span-4 text-right pr-2">Role</div>
-    //     </div>
+  if (error) {
+    return (
+      <div className="min-h-screen bg-Surface-Low flex items-center justify-center p-6">
+        <ProjectsErrorState
+          title="Something went wrong"
+          description="We're having trouble retrieving your project members right now. Please try again in a moment."
+          buttonText="Retry Connection"
+          onRetry={fetchMembers}
+        />
+      </div>
+    );
+  }
 
-    //     {/* Members List */}
-    //     <div className="divide-y divide-neutral-border/10">
-    //       {membersData.map((member) => (
-    //         <div
-    //           key={member.id}
-    //           className="grid grid-cols-12 items-center px-6 py-4 hover:bg-neutral-50/50 transition-colors"
-    //         >
-    //           {/* Member Info (Avatar + Name & Email) */}
-    //           <div className="col-span-8 flex items-center gap-3">
-    //             <div className="w-9 h-9 rounded-full bg-primary/10 text-primary font-semibold text-xs flex items-center justify-center shrink-0">
-    //               {member.initials}
-    //             </div>
-    //             <div className="flex flex-col min-w-0">
-    //               <span className="text-sm font-medium text-neutral-dark truncate">
-    //                 {member.name}
-    //               </span>
-    //               <span className="text-xs text-neutral-muted truncate">
-    //                 {member.email}
-    //               </span>
-    //             </div>
-    //           </div>
+  return (
+    <div className="min-h-screen bg-Surface-Low p-6 md:p-10 space-y-6 max-w-300 mx-auto">
+      {/* Breadcrumbs */}
+      <nav className="hidden sm:flex items-center gap-2 text-xs font-bold text-neutral-muted/60">
+        <Link
+          href="/project"
+          className=" uppercase tracking-wider"
+        >
+          Projects
+        </Link>
+        <span>/</span>
+        <Link
+          href={`/project/${projectId}`}
+          className=" uppercase tracking-wider"
+        >
+          {projectName}
+        </Link>
+        <span>/</span>
+        <span className=" font-medium uppercase text-primary tracking-wider">
+          Members
+        </span>
+      </nav>
 
-    //           {/* Role Badge */}
-    //           <div className="col-span-4 flex justify-end">
-    //             <span
-    //               className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
-    //                 member.isOwner
-    //                   ? "bg-primary text-white"
-    //                   : "bg-neutral-100 text-neutral-muted border border-neutral-200"
-    //               }`}
-    //             >
-    //               {member.role}
-    //             </span>
-    //           </div>
-    //         </div>
-    //       ))}
-    //     </div>
-    //   </div>
-    // </div>
+      {/* Header & Action Button */}
+      <div className="flex items-center justify-between">
+        <Typography
+          variant="headline-lg"
+          className="font-semibold text-neutral-dark "
+        >
+          Project Members
+        </Typography>
+
+        <Button variant="primary" className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-sm text-body-md text-white font-bold">
+          <Invite className="w-5 h-4"/> Invite Members
+        </Button>
+      </div>
+
+      {/* Main Members Card / Table Container */}
+      <div className=" rounded-lg shadow-sm overflow-hidden w-full sm:w-xl mx-auto sm:my-15">
+        {/* Table Header */}
+        <div className="bg-surface-low grid grid-cols-12 px-6 py-3 border-b border-nav-border text-label-sm font-bold text-neutral-muted uppercase tracking-wider">
+          <div className="col-span-8 ">Member</div>
+          <div className="col-span-4 text-right pr-2 ">Role</div>
+        </div>
+
+        {/* Members List Component */}
+        <MemberListTable members={members} />
+        
+      </div>
+
+       <Button variant="primary" className="flex ml-auto sm:hidden items-center justify-center w-10 h-10 rounded-lg text-white">
+          <Invite  /> 
+        </Button>
+    </div>
+    
   );
 }

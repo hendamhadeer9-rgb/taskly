@@ -40,12 +40,10 @@ export default function ResetPasswordForm() {
       const type = params.get("type");
       const error = params.get("error");
 
-      // 2. التحقق من صحة التوكين وأن نوعه recovery
       if (token && !error && (type === "recovery" || !type)) {
         setAccessToken(token);
         setIsTokenInvalid(false);
 
-        // 3. مسح الـ Hash من الـ URL لأمان التطبيق دون عمل Reload
         window.history.replaceState(null, "", window.location.pathname);
       } else {
         setIsTokenInvalid(true);
@@ -108,13 +106,12 @@ export default function ResetPasswordForm() {
 
       if (result && result.success) {
         toast.success(
-          "Your password has been updated successfully. You can now log in"
+          "Your password has been updated successfully. You can now log in",
         );
         setTimeout(() => {
           router.push("/login");
         }, 3000);
       } else {
-        // طباعة رسالة الخطأ القادمة من السيرفر أو Supabase بدقة
         const errorMsg =
           result?.error?.msg ||
           result?.error?.message ||
@@ -127,7 +124,6 @@ export default function ResetPasswordForm() {
     }
   };
 
-  // شاشة الانتظار لمنع الـ Hydration Error
   if (isCheckingToken) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-Surface-Low">
@@ -138,7 +134,6 @@ export default function ResetPasswordForm() {
     );
   }
 
-  // إذا كان الرابط غير صالح أو التوكين مش موجود
   if (isTokenInvalid || !accessToken) {
     return (
       <div className="min-h-screen w-full bg-Surface-Low flex flex-col justify-between p-4 sm:p-8">
