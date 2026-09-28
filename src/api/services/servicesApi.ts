@@ -185,5 +185,4 @@ export async function membersList(projectId: string) {
   } catch (error) {
     console.error("Error fetching members:", error);
     return null;
-  }
-}
+  }}
