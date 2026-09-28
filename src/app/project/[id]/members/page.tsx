@@ -31,7 +31,11 @@ export default function Page({ params }: PageProps) {
 
     try {
       const data = await membersList(projectId);
-      setMembers(data || []);
+      if (data === null) {
+        setError(true)
+        return;
+      }
+      setMembers(data );
     } catch (err) {
       console.error("Failed to fetch members:", err);
       setError(true);
