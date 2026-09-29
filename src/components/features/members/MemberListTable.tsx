@@ -54,8 +54,6 @@ export default function MemberListTable({ members }: MemberListTableProps) {
     return <MembersSkeleton />;
   }
 
-  
-
   if (!members || members.length === 0) {
     return (
       <div className="p-6 text-center text-sm text-neutral-muted">
@@ -80,7 +78,7 @@ export default function MemberListTable({ members }: MemberListTableProps) {
             : `${nameParts[0][0]}`.toUpperCase();
         return (
           <div
-            key={member.id }
+            key={member.id}
             className="grid grid-cols-12 items-center px-6 py-4 "
           >
             {/* Member Info */}

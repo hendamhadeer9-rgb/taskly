@@ -27,7 +27,7 @@ export default function EditProject({ params }: PageProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const projectId = resolvedParams?.id 
+  const projectId = resolvedParams?.id;
 
   const {
     register,

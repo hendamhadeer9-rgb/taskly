@@ -11,6 +11,7 @@
   --condition-box: #e8edff;
 
   --neutral-dark: #041b3c;
+  --medium-dark: #434654;
   --neutral-muted: #4f5f7b;
   --neutral-border: #c3c6d6;
 
@@ -39,7 +40,7 @@
   --text-title-md: 18px;
   --text-title-md--line-height: 27px;
 
-  --text-body-md: 14px;
+  --text-body-lg: 14px;
   --text-body-md--line-height: 22.75px;
 
   --text-label-sm: 11px;
@@ -61,6 +62,7 @@
   --color-condition-box: var(--condition-box);
 
   --color-neutral-dark: var(--neutral-dark);
+  --color-medium-dark: var(--medium-dark);
   --color-neutral-muted: var(--neutral-muted);
   --color-neutral-border: var(--neutral-border);
 

@@ -1,13 +1,12 @@
 "use server";
 
 import { ProjectUpdateData } from "@/app/project/[id]/edit/page";
+import { newEpicFormValues } from "@/app/project/[id]/epics/new/newEpicSchema";
 import { ProjectFormData } from "@/app/project/add/page";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-const baseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const apiKey =
-    process.env.NEXT_PUBLIC_SUPABASE_KEY!;
+const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const apiKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
 
 export async function getUserData() {
   const cookieStore = await cookies();
@@ -157,7 +156,6 @@ export async function updateProject(
   }
 }
 
-
 export async function membersList(projectId: string) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
@@ -177,7 +175,7 @@ export async function membersList(projectId: string) {
 
     if (response.ok) {
       const data = await response.json();
-      console.log("members123",data)
+      console.log("members123", data);
 
       return data;
     }
@@ -185,4 +183,37 @@ export async function membersList(projectId: string) {
   } catch (error) {
     console.error("Error fetching members:", error);
     return null;
-  }}
+  }
+}
+
+export async function newEpic(projectId: string, data: newEpicFormValues) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  try {
+    const response = await fetch(`${baseUrl}/rest/v1/epics`, {
+      method: "POST",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: data.title,
+        description: data.description,
+        assignee_id: data.assignee_id,
+        project_id: projectId,
+        deadline: data.deadline,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to create epic");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching members:", error);
+    return error;
+  }
+}

@@ -2,10 +2,8 @@
 import { cookies } from "next/headers";
 
 export async function logoutAction() {
-   const baseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const apiKey =
-    process.env.NEXT_PUBLIC_SUPABASE_KEY!;
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const apiKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
 
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;

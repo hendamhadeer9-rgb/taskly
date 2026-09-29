@@ -8,10 +8,7 @@ export default function MembersSkeleton({ count = 5 }: MembersSkeletonProps) {
   return (
     <div className="divide-y divide-neutral-border/10 w-full animate-pulse">
       {[...Array(count)].map((_, index) => (
-        <div
-          key={index}
-          className="grid grid-cols-12 items-center px-6 py-4"
-        >
+        <div key={index} className="grid grid-cols-12 items-center px-6 py-4">
           {/* Member Info (Avatar + Name & Email) */}
           <div className="col-span-8 flex items-center gap-3">
             {/* Avatar Circle */}

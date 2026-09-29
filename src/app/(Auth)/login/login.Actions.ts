@@ -4,10 +4,8 @@ import { LoginFormValues } from "./LoginForm";
 import { cookies } from "next/headers";
 
 export async function loginAction(data: LoginFormValues) {
-   const baseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const apiKey =
-    process.env.NEXT_PUBLIC_SUPABASE_KEY!;
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const apiKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
 
   try {
     const res = await fetch(`${baseUrl}/auth/v1/token?grant_type=password`, {

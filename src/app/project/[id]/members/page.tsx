@@ -5,8 +5,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Typography } from "@/components/ui/Typography";
 import { getProjectById, membersList } from "@/api/services/servicesApi";
-import Invite from "@/../../public/invite.svg"
-import MemberListTable, { Member } from "@/components/features/members/MemberListTable";
+import Invite from "@/../../public/invite.svg";
+import MemberListTable, {
+  Member,
+} from "@/components/features/members/MemberListTable";
 import { ProjectsErrorState } from "@/components/features/projects/ProjectsErrorState";
 
 interface PageProps {
@@ -22,26 +24,23 @@ export default function Page({ params }: PageProps) {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [projectName, setProjectName] = useState<string>("")
-
-
- 
+  const [projectName, setProjectName] = useState<string>("");
 
   const fetchMembers = async () => {
     if (!projectId) return;
-    
+
     setLoading(true);
     setError(false);
 
     try {
-       const project = await getProjectById(projectId);
-      
+      const project = await getProjectById(projectId);
+
       const data = await membersList(projectId);
       if (data === null) {
-        setError(true)
+        setError(true);
         return;
       }
-      setMembers(data );
+      setMembers(data);
       setProjectName(project.name);
     } catch (err) {
       console.error("Failed to fetch members:", err);
@@ -72,10 +71,7 @@ export default function Page({ params }: PageProps) {
     <div className="min-h-screen bg-Surface-Low p-6 md:p-10 space-y-6 max-w-300 mx-auto">
       {/* Breadcrumbs */}
       <nav className="hidden sm:flex items-center gap-2 text-xs font-bold text-neutral-muted/60">
-        <Link
-          href="/project"
-          className=" uppercase tracking-wider"
-        >
+        <Link href="/project" className=" uppercase tracking-wider">
           Projects
         </Link>
         <span>/</span>
@@ -100,8 +96,11 @@ export default function Page({ params }: PageProps) {
           Project Members
         </Typography>
 
-        <Button variant="primary" className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-sm text-body-md text-white font-bold">
-          <Invite className="w-5 h-4"/> Invite Members
+        <Button
+          variant="primary"
+          className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-sm text-body-md text-white font-bold"
+        >
+          <Invite className="w-5 h-4" /> Invite Members
         </Button>
       </div>
 
@@ -115,13 +114,14 @@ export default function Page({ params }: PageProps) {
 
         {/* Members List Component */}
         <MemberListTable members={members} />
-        
       </div>
 
-       <Button variant="primary" className="flex ml-auto sm:hidden items-center justify-center w-10 h-10 rounded-lg text-white">
-          <Invite  /> 
-        </Button>
+      <Button
+        variant="primary"
+        className="flex ml-auto sm:hidden items-center justify-center w-10 h-10 rounded-lg text-white"
+      >
+        <Invite />
+      </Button>
     </div>
-    
   );
 }

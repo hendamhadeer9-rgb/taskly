@@ -48,7 +48,7 @@ export default function Sidebar({
       ? pathSegments[2]
       : activeProjectId;
 
-  const isProjectsSection = pathname.startsWith("/project") && currentProjectId;
+  const isProjectsSection = currentProjectId;
 
   useEffect(() => {
     async function fetchProjectName() {
@@ -83,7 +83,7 @@ export default function Sidebar({
     {
       label: "Epics",
       icon: <Epics className="w-5 h-5 shrink-0" />,
-      href: `/project/${currentProjectId}/epic`,
+      href: `/project/${currentProjectId}/epics`,
     },
     {
       label: "Tasks",
@@ -190,9 +190,7 @@ export default function Sidebar({
                 <div className="flex items-center gap-3">
                   <Folder className="w-5 h-5 shrink-0" />
                   {!isCollapsed && (
-                    <span className="truncate max-w-32.5">
-                      {projectName}
-                    </span>
+                    <span className="truncate max-w-32.5">{projectName}</span>
                   )}
                 </div>
 
