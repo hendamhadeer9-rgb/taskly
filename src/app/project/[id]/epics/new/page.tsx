@@ -7,7 +7,7 @@ import { membersList, newEpic } from "@/api/services/servicesApi";
 import { toast } from "sonner";
 import { newEpicFormValues } from "./newEpicSchema";
 import { Typography } from "@/components/ui/Typography";
-import Right from "@/../public/Right.svg";
+import Right from "@/../public/right.svg";
 
 export default function Page() {
   const params = useParams();
