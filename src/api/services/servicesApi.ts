@@ -207,13 +207,14 @@ export async function newEpic(projectId: string, data: newEpicFormValues) {
       }),
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to create epic");
-    }
+    
+if (!response.ok) {
+    throw new Error("Failed");
+  }
 
-    return await response.json();
+  return await response.json();
   } catch (error) {
     console.error("Error fetching members:", error);
-    return error;
+    return null;
   }
 }

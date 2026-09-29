@@ -4,6 +4,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Details from "@/../public/details.svg";
+import { Button } from "@/components/ui/Button";
 import {
   newEpicFormValues,
   newEpicSchema,
@@ -76,7 +77,7 @@ export function EpicCard({
             />
             {errors.title && (
               <p className="flex items-center gap-1.5 text-label-sm font-bold uppercase text-error">
-                <Details />
+                <Details className=" [&_path]:fill-error "/>
                 {errors.title.message}
               </p>
             )}
@@ -160,21 +161,19 @@ export function EpicCard({
 
         {/* BUTTONS */}
         <div className="mt-6 flex items-center justify-end gap-4 pt-2">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="rounded-lg px-6 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50 cursor-pointer"
+            className=" px-6"
           >
             Cancel
-          </button>
-          <button
-            type="submit"
+          </Button>
+          <Button variant="primary" className="px-6"
             disabled={isLoading}
-            className="rounded-lg bg-[#0042b3] px-8 py-3 text-sm font-bold text-white shadow-md hover:bg-blue-800 disabled:opacity-50 transition-colors cursor-pointer"
           >
             {isLoading ? "Creating..." : "Create Epic"}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

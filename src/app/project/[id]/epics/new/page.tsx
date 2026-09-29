@@ -50,17 +50,14 @@ export default function Page() {
     try {
       setIsLoading(true);
 
-      const res = await newEpic(projectId, data);
-      if (!res.ok) {
-        toast.error("Can not create new epic, please try again");
-        return;
-      }
+      await newEpic(projectId, data);
 
       toast.success("Epic created successfully");
       router.push(`/project/${projectId}/epics`);
       router.refresh();
     } catch (error) {
       console.error("Failed to create epic:", error);
+      toast.error("Can not create new epic, please try again");
     } finally {
       setIsLoading(false);
     }
