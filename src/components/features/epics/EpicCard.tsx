@@ -77,7 +77,7 @@ export function EpicCard({
             />
             {errors.title && (
               <p className="flex items-center gap-1.5 text-label-sm font-bold uppercase text-error">
-                <Details className=" [&_path]:fill-error "/>
+                <Details className=" [&_path]:fill-error " />
                 {errors.title.message}
               </p>
             )}
@@ -161,7 +161,8 @@ export function EpicCard({
 
         {/* BUTTONS */}
         <div className="mt-6 flex items-center justify-end gap-4 pt-2">
-          <Button variant="ghost"
+          <Button
+            variant="ghost"
             type="button"
             onClick={onCancel}
             disabled={isLoading}
@@ -169,9 +170,7 @@ export function EpicCard({
           >
             Cancel
           </Button>
-          <Button variant="primary" className="px-6"
-            disabled={isLoading}
-          >
+          <Button variant="primary" className="px-6" disabled={isLoading}>
             {isLoading ? "Creating..." : "Create Epic"}
           </Button>
         </div>

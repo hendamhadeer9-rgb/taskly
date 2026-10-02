@@ -5,6 +5,11 @@ import { newEpicFormValues } from "@/app/project/[id]/epics/new/newEpicSchema";
 import { ProjectFormData } from "@/app/project/add/page";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+
+export interface FetchProjectsResponse {
+  data: any[];
+  totalCount: number;
+}
 const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const apiKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
 
@@ -66,30 +71,51 @@ export async function addNewProject(data: ProjectFormData) {
   }
 }
 
-export async function getProjects() {
+export async function getProjects(limit: number = 10, offset: number = 0) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
   try {
-    const response = await fetch(`${baseUrl}/rest/v1/rpc/get_projects`, {
-      method: "POST",
-      headers: {
-        apikey: apiKey,
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${baseUrl}/rest/v1/rpc/get_projects?limit=${limit}&offset=${offset}`,
+      {
+        method: "GET",
+        headers: {
+          apikey: apiKey,
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Prefer: "count=exact",
+        },
       },
-      body: JSON.stringify({}),
-    });
+    );
 
     if (response.ok) {
       const data = await response.json();
-      return { success: true, data };
+
+      // 1. استخراج Content-Range header وقراءة إجمالي العدد totalCount
+      const contentRange = response.headers.get("Content-Range");
+      let totalCount = 0;
+
+      if (contentRange) {
+        const parts = contentRange.split("/");
+        if (parts.length === 2) {
+          const totalStr = parts[1].trim();
+          if (totalStr !== "*") {
+            const parsedTotal = parseInt(totalStr, 10);
+            if (!isNaN(parsedTotal)) {
+              totalCount = parsedTotal;
+            }
+          }
+        }
+      }
+
+      return { success: true, data, totalCount };
     }
 
-    return { success: false, data: [] };
+    return { success: false, data: [], totalCount: 0 };
   } catch (error) {
     console.error("Error fetching projects:", error);
-    return { success: false, data: [] };
+    return { success: false, data: [], totalCount: 0 };
   }
 }
 
@@ -207,14 +233,60 @@ export async function newEpic(projectId: string, data: newEpicFormValues) {
       }),
     });
 
-    
-if (!response.ok) {
-    throw new Error("Failed");
-  }
+    if (!response.ok) {
+      throw new Error("Failed");
+    }
 
-  return await response.json();
+    return await response.json();
   } catch (error) {
     console.error("Error fetching members:", error);
     return null;
   }
+}
+
+export async function fetchPagination(
+  limit: number,
+  offset: number,
+): Promise<FetchProjectsResponse> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  const response = await fetch(
+    `${baseUrl}/rest/v1/rpc/get_projects?limit=${limit}&offset=${offset}`,
+    {
+      method: "GET",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Prefer: "count=exact",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to load projects");
+  }
+
+  const data = await response.json();
+
+  // 1. استخراج Content-Range header
+  const contentRange = response.headers.get("Content-Range");
+  let totalCount = 0;
+
+  if (contentRange) {
+    // تنسيق الهيدر عادة يكون: "0-9/100"
+    const parts = contentRange.split("/");
+    if (parts.length === 2) {
+      const parsedTotal = parseInt(parts[1], 10);
+      if (!isNaN(parsedTotal)) {
+        totalCount = parsedTotal;
+      }
+    }
+  }
+
+  return {
+    data,
+    totalCount,
+  };
 }
