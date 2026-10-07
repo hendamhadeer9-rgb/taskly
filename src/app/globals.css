@@ -15,6 +15,12 @@
   --neutral-muted: #4f5f7b;
   --neutral-border: #c3c6d6;
 
+  --to-do: #94A3B8;
+  --ready-for: #0C56D0;
+  --production: #004E32;
+  --done:#65DCA4;
+
+
   --success: #82f9be;
   --green: #005235;
   --error: #ba1a1a;
@@ -65,6 +71,11 @@
   --color-medium-dark: var(--medium-dark);
   --color-neutral-muted: var(--neutral-muted);
   --color-neutral-border: var(--neutral-border);
+
+  --color-to-do: var(--to-do);
+  --color-ready-for: var(--ready-for);
+  --color-production: var(--production);
+  --color-done: var(--done);
 
   --color-success: var(--success);
   --color-green: var(--green);
