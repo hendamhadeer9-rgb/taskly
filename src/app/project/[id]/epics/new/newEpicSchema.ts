@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const newEpicSchema = z.object({
-  title: z
+  name: z
     .string()
     .min(3, { message: "TITLE IS REQUIRED (MINIMUM 3 CHARACTERS)" }),
   description: z

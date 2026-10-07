@@ -6,6 +6,25 @@ import { ProjectFormData } from "@/app/project/add/page";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
+export interface UserInfo {
+  sub: string;
+  name: string;
+  email: string;
+  department?: string;
+  avatar_url?: string;
+}
+
+export interface Epic {
+  id: string;
+  epic_id: string;
+  title: string;
+  description?: string;
+  deadline: string ;
+  created_at: string;
+  created_by: UserInfo;
+  assignee: UserInfo;
+}
+
 export interface FetchProjectsResponse {
   data: any[];
   totalCount: number;
@@ -218,29 +237,34 @@ export async function newEpic(projectId: string, data: newEpicFormValues) {
 
   try {
     const response = await fetch(`${baseUrl}/rest/v1/epics`, {
+      // ✅ تم تصحيح الجدول
       method: "POST",
       headers: {
-        apikey: apiKey,
-        Authorization: `Bearer ${token}`,
+        apikey: apiKey!,
+        Authorization: `Bearer ${token}`, // ✅ استخدام apiKey كـ fallback لو الـ token غير موجود
         "Content-Type": "application/json",
+        Prefer: "return=representation",
       },
       body: JSON.stringify({
-        title: data.title,
-        description: data.description,
-        assignee_id: data.assignee_id,
+        title: data.name, // ✅ تصحيح الاسم ليكون name
+        description: data.description || null,
+        // ✅ منع إرسال السلاسل الفارغة "" للحقول التي تتوقع UUID أو Date في Supabase
+        assignee_id: data.assignee_id ? data.assignee_id : null,
         project_id: projectId,
-        deadline: data.deadline,
+        deadline: data.deadline ? data.deadline : null,
       }),
     });
 
     if (!response.ok) {
-      throw new Error("Failed");
+      const errorDetail = await response.text();
+      console.error("Supabase Error Details:", errorDetail);
+      throw new Error(`Failed to create epic: ${errorDetail}`);
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching members:", error);
-    return null;
+    console.error("Error in newEpic execution:", error);
+    throw error; // 🛑 مهم جداً: إلقاء الخطأ حتى يعرف الـ UI إن العملية فشلت
   }
 }
 
@@ -289,4 +313,136 @@ export async function fetchPagination(
     data,
     totalCount,
   };
+}
+
+export async function getProjectEpics(
+  projectId: string,
+): Promise<{ success: boolean; data?: Epic[]; error?: string }> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  try {
+    const response = await fetch(
+      `${baseUrl}/rest/v1/project_epics?project_id=eq.${projectId}`,
+      {
+        headers: {
+          apikey: apiKey,
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch epics: ${response.statusText}`);
+    }
+
+    const data: Epic[] = await response.json();
+    return { success: true, data };
+  } catch (error: any) {
+    return { success: false, error: error.message || "Something went wrong" };
+  }
+}
+
+// دالة منفصلة تماماً للـ Pagination الخاصة بالـ Epics
+export async function getPaginatedProjectEpics(
+  projectId: string,
+  limit: number = 10,
+  offset: number = 0,
+  search: string = "",
+) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  try {
+    const searchQuery = search.trim()
+      ? `&title=ilike.*${encodeURIComponent(search.trim())}*`
+      : "";
+    const response = await fetch(
+      `${baseUrl}/rest/v1/project_epics?project_id=eq.${projectId}&limit=${limit}&offset=${offset}${searchQuery}`,
+      {
+        method: "GET",
+        headers: {
+          apikey: apiKey,
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Prefer: "count=exact", // ضروري لرجوع Total Count من Supabase
+        },
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      return { success: false, data: [], totalCount: 0 };
+    }
+
+    const data = await response.json();
+
+    // 1. قراءة الهيدر بغض النظر عن حالة الأحرف (Content-Range / content-range)
+    const contentRange =
+      response.headers.get("content-range") ||
+      response.headers.get("Content-Range");
+
+    let totalCount = 0;
+
+    if (contentRange) {
+      // القيمة تكون بالشكل: "0-9/25" أو "0-4/5"
+      const totalStr = contentRange.split("/")[1];
+      if (totalStr && totalStr !== "*") {
+        totalCount = parseInt(totalStr, 10);
+      }
+    }
+
+    // fallback إذا لم يتوفر الهيدر
+    if (!totalCount) {
+      totalCount = Array.isArray(data) ? data.length : 0;
+    }
+
+    console.log("Debug Pagination:", { contentRange, totalCount, limit });
+
+    return {
+      success: true,
+      data: Array.isArray(data) ? data : [],
+      totalCount,
+    };
+  } catch (error) {
+    console.error("Error fetching paginated project epics:", error);
+    return { success: false, data: [], totalCount: 0 };
+  }
+}
+
+export async function getEpicDetails(projectId: string, epicId: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  try {
+    const response = await fetch(
+      `${baseUrl}/rest/v1/project_epics?project_id=eq.${projectId}&id=eq.${epicId}`,
+      {
+        method: "GET",
+        headers: {
+          apikey: apiKey,
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      return { success: false, data: null };
+    }
+
+    const data = await response.json();
+    // Supabase يرجع Array تحتوي على عنصر واحد
+    const epic = Array.isArray(data) && data.length > 0 ? data[0] : null;
+
+    return {
+      success: !!epic,
+      data: epic,
+    };
+  } catch (error) {
+    console.error("Error fetching epic details:", error);
+    return { success: false, data: null };
+  }
 }

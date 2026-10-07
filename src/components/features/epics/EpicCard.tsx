@@ -40,7 +40,7 @@ export function EpicCard({
   } = useForm<newEpicFormValues>({
     resolver: zodResolver(newEpicSchema),
     defaultValues: {
-      title: "",
+      name: "",
       description: "",
       assignee_id: "",
       deadline: "",
@@ -70,15 +70,15 @@ export function EpicCard({
               id="title"
               type="text"
               placeholder="e.g. Structural Foundation Phase"
-              {...register("title")}
+              {...register("name")}
               className={`w-full rounded-sm px-4 py-3 text-sm outline-none transition-colors bg-surface-highest ${
-                errors.title
+                errors.name
               }`}
             />
-            {errors.title && (
+            {errors.name && (
               <p className="flex items-center gap-1.5 text-label-sm font-bold uppercase text-error">
                 <Details className=" [&_path]:fill-error " />
-                {errors.title.message}
+                {errors.name.message}
               </p>
             )}
           </div>

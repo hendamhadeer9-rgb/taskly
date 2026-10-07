@@ -25,11 +25,12 @@ export default function Page() {
       try {
         setIsFetchingMembers(true);
         const data = await membersList(projectId);
+        console.log("Members API Raw Data:", data);
 
         if (data && Array.isArray(data)) {
           // استخراج الاسم والـ ID بالظبط كما هو معرف في MemberListTable
           const formattedMembers = data.map((m: any) => ({
-            id: m.id,
+            id: m.user_id,
             name: m.metadata?.name,
           }));
 
@@ -53,8 +54,8 @@ export default function Page() {
       await newEpic(projectId, data);
 
       toast.success("Epic created successfully");
-      router.push(`/project/${projectId}/epics`);
       router.refresh();
+      router.push(`/project/${projectId}/epics`);
     } catch (error) {
       console.error("Failed to create epic:", error);
       toast.error("Can not create new epic, please try again");

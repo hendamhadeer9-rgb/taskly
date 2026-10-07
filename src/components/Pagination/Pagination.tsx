@@ -18,8 +18,6 @@ export default function Pagination({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  if (totalPages <= 1) return null;
-
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", pageNumber.toString());
@@ -48,7 +46,7 @@ export default function Pagination({
       ) : (
         <Link
           href={createPageURL(currentPage - 1)}
-          className={`${baseButtonStyles} bg-white border border-nav-border text-neytral-dark`}
+          className={`${baseButtonStyles} bg-white border border-nav-border text-neutral-dark`}
           aria-label="Previous Page"
         >
           <Left />
@@ -60,7 +58,7 @@ export default function Pagination({
           return (
             <span
               key={`ellipsis-${index}`}
-              className={`${baseButtonStyles} bg-white border border-van-border text-neutral-dark select-none`}
+              className={`${baseButtonStyles} bg-white border border-nav-border text-neutral-dark select-none`}
             >
               ...
             </span>
