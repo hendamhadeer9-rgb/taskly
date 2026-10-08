@@ -14,6 +14,17 @@ export interface UserInfo {
   avatar_url?: string;
 }
 
+export interface CreateTaskPayload {
+  project_id: string;
+  title: string;
+  description?: string | null;
+  epic_id?: string | null;
+  assignee_id?: string | null;
+  due_date?: string | null;
+  status?: string;
+}
+
+
 export interface Epic {
   id: string;
   epic_id: string;
@@ -444,5 +455,46 @@ export async function getEpicDetails(projectId: string, epicId: string) {
   } catch (error) {
     console.error("Error fetching epic details:", error);
     return { success: false, data: null };
+  }
+}
+
+
+export async function addNewTask(data: CreateTaskPayload) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  try {
+    const response = await fetch(`${baseUrl}/rest/v1/tasks`, {
+      method: "POST",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify({
+        project_id: data.project_id,
+        title: data.title.trim(),
+        description: data.description?.trim() || null,
+        epic_id: data.epic_id || null,
+        assignee_id: data.assignee_id || null,
+        due_date: data.due_date ? new Date(data.due_date).toISOString() : null,
+        status: data.status || "TO_DO",
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Supabase error response:", errorText);
+      return { success: false, error: errorText || "Failed to create task" };
+    }
+
+    const result = await response.json();
+    revalidatePath(`/project/${data.project_id}/tasks`);
+
+    return { success: true, data: result };
+  } catch (error: any) {
+    console.error("Fetch error creating task:", error);
+    return { success: false, error: error.message || "Failed to create task" };
   }
 }

@@ -3,9 +3,10 @@ import { TaskStatusConfig } from "./tasksConfig";
 
 interface TaskColumnProps {
   status: TaskStatusConfig;
+  onAddTask?: (statusId: string) => void;
 }
 
-export function TaskColumn({ status }: TaskColumnProps) {
+export function TaskColumn({ status, onAddTask }: TaskColumnProps) {
   return (
     <div className="w-[280px] shrink-0 flex flex-col gap-3">
       {/* 1. Column Header */}
@@ -22,6 +23,7 @@ export function TaskColumn({ status }: TaskColumnProps) {
       {/* 2. Add New Task UI Button */}
       <button
         type="button"
+        onClick={() => onAddTask?.(status.id)}
         className="w-full h-11 border-2 border-dashed border-slate-200 hover:border-slate-300 rounded-lg flex items-center justify-center gap-2 text-xs font-bold text-slate-400 hover:text-slate-500 transition-colors bg-white/50 cursor-default"
       >
         <span>ADD NEW TASK</span>

@@ -46,7 +46,7 @@ export default async function TasksPage({ params }: TasksPageProps) {
 
       {/* 2. Empty State Kanban Board */}
       <div className="mt-2">
-        <TaskBoard />
+       <TaskBoard projectId={projectId} />
       </div>
     </div>
   );
