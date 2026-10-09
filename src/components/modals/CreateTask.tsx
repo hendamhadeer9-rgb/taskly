@@ -8,6 +8,8 @@ import {
   membersList,
   Epic,
 } from "@/api/services/servicesApi";
+import { toast } from "sonner";
+import Down from "@/../public/Down.svg";
 
 interface Member {
   user_id: string;
@@ -21,6 +23,7 @@ interface CreateTaskModalProps {
   projectId: string;
   defaultStatus?: string;
   preselectedEpicId?: string | null;
+  onTaskCreated?: (newTask?: any) => void;
 }
 
 export function CreateTask({
@@ -29,6 +32,7 @@ export function CreateTask({
   projectId,
   defaultStatus = "TO_DO",
   preselectedEpicId = null,
+  onTaskCreated,
 }: CreateTaskModalProps) {
   // Form States
   const [title, setTitle] = useState("");
@@ -109,9 +113,13 @@ export function CreateTask({
     setIsSubmitting(false);
 
     if (res.success) {
+      if (onTaskCreated) {
+        onTaskCreated(res.data);
+      }
       onClose();
+      toast.success("task created successfully");
     } else {
-      setErrorMessage(res.error || "Failed to create task");
+      setErrorMessage(res.error);
     }
   };
 
@@ -121,34 +129,33 @@ export function CreateTask({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 pb-4 border-b border-slate-100">
-          <h2 className="text-xl font-bold text-slate-800">Add New Task</h2>
-          <button
-            onClick={onClose}
-            disabled={isSubmitting}
-            className="text-slate-400 hover:text-slate-600 transition-colors p-1"
-          >
-          </button>
-        </div>
+    <div
+      className="fixed inset-0 w-screen h-screen z-999 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Left Side: Form Details & Actions */}
+        <div className="flex-1 p-7 flex flex-col justify-between overflow-y-auto">
+          <div>
+            {/* Header */}
+            <h2 className="text-lg font-bold text-neutral-dark mb-6">
+              Add New Task
+            </h2>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5">
-          {errorMessage && (
-            <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-md">
-              {errorMessage}
-            </div>
-          )}
+            {errorMessage && (
+              <div className="p-3 mb-4  text-error text-xs ">
+                {errorMessage}
+              </div>
+            )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Left Main Section */}
-            <div className="md:col-span-2 space-y-4">
+            <div className="space-y-5">
               {/* Title */}
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1.5">
-                  TITLE <span className="text-red-500">*</span>
+                <label className="block text-label-sm font-bold text-medium-dark uppercase tracking-wider mb-2">
+                  TITLE
                 </label>
                 <input
                   type="text"
@@ -158,125 +165,142 @@ export function CreateTask({
                     setTitle(e.target.value);
                     if (e.target.value.trim()) setTitleError("");
                   }}
-                  className={`w-full px-3.5 py-2.5 text-sm bg-slate-50 border ${
-                    titleError ? "border-red-500" : "border-slate-200"
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D9B]/20 focus:border-[#003D9B]`}
+                  className={`w-full px-3.5 py-2.5 text-xs  border border-surface-highest rounded-xl focus:outline-none placeholder:text-medium-dark/60 `}
                 />
                 {titleError && (
-                  <p className="text-xs text-red-500 mt-1">{titleError}</p>
+                  <p className="text-xs text-error mt-1">{titleError}</p>
                 )}
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1.5">
+                <label className="block text-label-sm font-bold text-medium-dark uppercase tracking-wider mb-2">
                   DESCRIPTION
                 </label>
                 <textarea
-                  rows={6}
+                  rows={10}
                   placeholder="Provide detailed context for this task..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D9B]/20 focus:border-[#003D9B] resize-none"
-                />
-              </div>
-            </div>
-
-            {/* Right Sidebar Controls */}
-            <div className="space-y-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
-              {/* Status */}
-              <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1.5">
-                  STATUS
-                </label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D9B]/20 focus:border-[#003D9B]"
-                >
-                  {TASK_STATUSES.map((st) => (
-                    <option key={st.id} value={st.id}>
-                      {st.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Assignee */}
-              <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1.5">
-                  ASSIGNEE
-                </label>
-                <select
-                  value={assigneeId}
-                  onChange={(e) => setAssigneeId(e.target.value)}
-                  disabled={loadingData}
-                  className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D9B]/20 focus:border-[#003D9B]"
-                >
-                  <option value="">Select Team Member</option>
-                  {members.map((mem) => (
-                    <option key={mem.user_id} value={mem.user_id}>
-                      {mem.name || mem.email}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Epic */}
-              <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1.5">
-                  EPIC
-                </label>
-                <select
-                  value={epicId}
-                  onChange={(e) => setEpicId(e.target.value)}
-                  disabled={loadingData}
-                  className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D9B]/20 focus:border-[#003D9B]"
-                >
-                  <option value="">Select Epic</option>
-                  {epics.map((ep) => (
-                    <option key={ep.id} value={ep.id}>
-                      {ep.epic_id ? `[${ep.epic_id}] ` : ""}
-                      {truncateTitle(ep.title)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Due Date */}
-              <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1.5">
-                  DUE DATE
-                </label>
-                <input
-                  type="datetime-local"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003D9B]/20 focus:border-[#003D9B]"
+                  className="w-full px-3.5 py-3 text-xs  border border-surface-highest rounded-xl focus:outline-none resize-none placeholder:text-medium-dark/60 leading-relaxed"
                 />
               </div>
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-6">
+          {/* Action Buttons */}
+          <div className="flex items-center justify-between gap-3 pt-6 mt-4">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-5 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors"
+              className="px-5 py-2 text-xs font-semibold text-neutral-dark bg-surface-highest  rounded-xl  cursor-pointer"
             >
               Close
             </button>
             <button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               disabled={isSubmitting}
-              className="px-6 py-2.5 text-sm font-medium text-white bg-[#003D9B] hover:bg-blue-800 rounded-md transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-6 py-2 text-xs font-semibold text-white bg-primary rounded-lg transition-colors cursor-pointer"
             >
-              {isSubmitting ? "Creating..." : "Add Task"}
+              {isSubmitting ? "Adding..." : "Add Task"}
             </button>
           </div>
-        </form>
+        </div>
+
+        {/* Right Side Controls Sidebar */}
+        <div className="w-full md:w-72 bg-condition-box p-6 flex flex-col gap-5 ">
+          {/* Status */}
+          <div>
+            <label className="block text-label-sm font-bold text-medium-dark uppercase tracking-wider mb-2">
+              STATUS
+            </label>
+            <div className="relative">
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-xs bg-white border border-surface-highest rounded-xl appearance-none focus:outline-none font-medium cursor-pointer"
+              >
+                {TASK_STATUSES.map((st) => (
+                  <option key={st.id} value={st.id}>
+                    {st.label}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <Down />
+              </div>
+            </div>
+          </div>
+
+          {/* Assignee */}
+          <div>
+            <label className="block text-[11px] font-bold text-medium-dark uppercase tracking-wider mb-2">
+              ASSIGNEE
+            </label>
+            <div className="relative">
+              <select
+                value={assigneeId}
+                onChange={(e) => setAssigneeId(e.target.value)}
+                disabled={loadingData}
+                className="w-full px-3.5 py-2.5 text-xs bg-white border border-surface-highest rounded-xl appearance-none focus:outline-none font-medium cursor-pointer"
+              >
+                <option value="">Select Team Member</option>
+                {members.map((mem) => (
+                  <option key={mem.user_id} value={mem.user_id}>
+                    {mem.name || mem.email}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <Down />
+              </div>
+            </div>
+          </div>
+
+          {/* Epic */}
+          <div>
+            <label className="block text-[11px] font-bold text-medium-dark uppercase tracking-wider mb-2">
+              EPIC
+            </label>
+            <div className="relative">
+              <select
+                value={epicId}
+                onChange={(e) => setEpicId(e.target.value)}
+                disabled={loadingData}
+                className="w-full px-3.5 py-2.5 text-xs bg-white border border-surface-highest rounded-xl appearance-none focus:outline-none font-medium cursor-pointer"
+              >
+                <option value="">Select Epic</option>
+                {epics.map((ep) => (
+                  <option key={ep.id} value={ep.id}>
+                    {ep.epic_id ? `[${ep.epic_id}] ` : ""}
+                    {truncateTitle(ep.title)}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <Down />
+              </div>
+            </div>
+          </div>
+
+          {/* Due Date */}
+          <div>
+            <label className="block text-[11px] font-bold text-medium-dark uppercase tracking-wider mb-2">
+              DUE DATE
+            </label>
+            <div className="relative">
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-xs bg-white border border-surface-highest rounded-xl appearance-none focus:outline-none font-medium cursor-pointer"
+              />
+              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

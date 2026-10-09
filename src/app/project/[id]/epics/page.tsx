@@ -8,6 +8,9 @@ import { Epic, getPaginatedProjectEpics } from "@/api/services/servicesApi";
 import { MobileEpicsInfiniteScroll } from "@/components/features/epics/MobileEpicsInfiniteScroll";
 import { DesktopEpicsList } from "@/components/features/epics/DesktopEpicsList";
 import { EpicSearchInput } from "@/components/features/epics/EpicSearchInput";
+import { getProjectById } from "@/api/services/servicesApi";
+import Right from "@/../public/right.svg";
+import Plus from "@/../public/plus.svg";
 
 interface ProjectEpicsPageProps {
   params: Promise<{ id: string }>;
@@ -19,6 +22,7 @@ export default async function ProjectEpicPage({
   searchParams,
 }: ProjectEpicsPageProps) {
   const { id: projectId } = await params;
+  const project = await getProjectById(projectId);
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const currentPage = Math.max(
     1,
@@ -36,7 +40,6 @@ export default async function ProjectEpicPage({
     searchTerm,
   );
 
-  // 1. معالجة حالة فشل الـ API
   if (!paginationResult.success) {
     return <ProjectsErrorState description="Failed to search epics" />;
   }
@@ -45,7 +48,6 @@ export default async function ProjectEpicPage({
   const totalCount = paginationResult.totalCount;
   const totalPages = Math.ceil(totalCount / limit);
 
-  // 2. حالة المشروع الفارغ تماماً (لا توجد Epics أصلاً وبدون كلمة بحث)
   if (epicsList.length === 0 && !searchTerm) {
     return <EpicsEmptyState projectId={projectId} />;
   }
@@ -56,9 +58,31 @@ export default async function ProjectEpicPage({
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
+            <nav className="hidden sm:flex items-center gap-2 text-xs font-bold text-neutral-muted/60">
+              <Link href="/project" className=" uppercase tracking-wider">
+                Projects
+              </Link>
+              <span>
+                <Right />
+              </span>
+
+              <Link
+                href={`/project/${projectId}`}
+                className=" uppercase tracking-wider"
+              >
+                {project?.name}
+              </Link>
+              <span>
+                <Right />
+              </span>
+              <span className=" font-medium uppercase text-primary tracking-wider">
+                epics
+              </span>
+            </nav>
+
             <Typography
               variant="headline-lg"
-              className="font-bold text-slate-800"
+              className="font-bold text-neutral-dark mt-3"
             >
               Project Epics
             </Typography>
@@ -74,9 +98,9 @@ export default async function ProjectEpicPage({
             >
               <Button
                 variant="primary"
-                className="bg-[#003D9B] hover:bg-blue-800 px-5 py-2.5 font-medium text-white rounded-md h-[48px] whitespace-nowrap"
+                className="flex items-center justify-center gap-2 px-5 py-2.5 font-medium text-white rounded-md h-12 "
               >
-                + New Epic
+                <Plus /> New Epic
               </Button>
             </Link>
           </div>
@@ -87,11 +111,11 @@ export default async function ProjectEpicPage({
           <div className="text-center py-16 bg-slate-50 border border-dashed border-slate-200 rounded-lg">
             <Typography
               variant="headline-lg"
-              className="text-slate-600 font-medium"
+              className="text-neutral-dark font-medium"
             >
               No epics found matching your search
             </Typography>
-            <p className="text-sm text-slate-400 mt-1">
+            <p className="text-sm text-medium-dark mt-1">
               Try searching with a different term or clear the search input.
             </p>
           </div>
@@ -124,9 +148,9 @@ export default async function ProjectEpicPage({
       <Link href={`/project/${projectId}/epics/new`}>
         <Button
           variant="primary"
-          className="sm:hidden fixed bottom-20 right-5 w-12 h-12 bg-[#003D9B] font-medium text-white rounded-xl flex items-center justify-center z-50 shadow-lg"
+          className="sm:hidden fixed bottom-20 right-5 w-12 h-12  rounded-xl flex items-center justify-center z-50 "
         >
-          <span className="text-2xl font-light">+</span>
+          <Plus />
         </Button>
       </Link>
     </div>

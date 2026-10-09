@@ -5,12 +5,12 @@ export interface TaskStatusConfig {
 }
 
 export const TASK_STATUSES: TaskStatusConfig[] = [
-  { id: "todo", label: "TO DO", color: "bg-to-do" },
-  { id: "in_progress", label: "IN PROGRESS", color: "bg-Primary-Container" },
-  { id: "blocked", label: "BLOCKED", color: "bg-error" },
-  { id: "in_review", label: "IN REVIEW", color: "bg-neutral-muted" },
-  { id: "ready_for_qa", label: "READY FOR QA", color: "bg-ready-for" },
-  { id: "reopened", label: "REOPENED", color: "bg-error" },
-  { id: "ready_for_prod", label: "READY FOR PROD", color: "bg-production" },
-  { id: "done", label: "DONE", color: "bg-done" },
+  { id: "TO_DO", label: "TO DO", color: "bg-to-do" },
+  { id: "IN_PROGRESS", label: "IN PROGRESS", color: "bg-Primary-Container" },
+  { id: "BLOCKED", label: "BLOCKED", color: "bg-error" },
+  { id: "IN_REVIEW", label: "IN REVIEW", color: "bg-neutral-muted" },
+  { id: "READY_FOR_QA", label: "READY FOR QA", color: "bg-ready-for" },
+  { id: "REOPENED", label: "REOPENED", color: "bg-error" },
+  { id: "READY_FOR_PROD", label: "READY FOR PROD", color: "bg-production" },
+  { id: "DONE", label: "DONE", color: "bg-done" },
 ];

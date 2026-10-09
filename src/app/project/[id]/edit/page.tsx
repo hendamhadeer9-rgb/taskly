@@ -92,7 +92,7 @@ export default function EditProject({ params }: PageProps) {
   return (
     <>
       <div className="pt-8 hidden md:block">
-        <Typography variant="label-sm" className="px-8">
+        <Typography variant="label-sm" className="px-8 font-bold">
           Projects <span className="mx-1">/</span>PROJECT TITLE
           <span className="mx-1">/</span>
           <span className="text-primary">EDIT</span>

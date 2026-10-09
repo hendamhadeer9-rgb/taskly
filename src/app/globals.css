@@ -4,7 +4,7 @@
   --primary: #003d9b;
   --Primary-Gradient: linear-gradient(95.71deg, #003d9b 0%, #0052cc 100%);
   --Primary-Container: #0052cc;
-  --Surface-Highest: #d7e2ff;
+  --surface-highest: #d7e2ff;
   --Surface-Medium: #dce7fe;
   --Surface-Low: #f1f3ff;
   --Background: #f9f9ff;
@@ -15,11 +15,10 @@
   --neutral-muted: #4f5f7b;
   --neutral-border: #c3c6d6;
 
-  --to-do: #94A3B8;
-  --ready-for: #0C56D0;
-  --production: #004E32;
-  --done:#65DCA4;
-
+  --to-do: #94a3b8;
+  --ready-for: #0c56d0;
+  --production: #004e32;
+  --done: #65dca4;
 
   --success: #82f9be;
   --green: #005235;
@@ -61,7 +60,7 @@
   --color-primary: var(--primary);
   --background-image-Primary-Gradient: var(--Primary-Gradient);
   --color-primary-container: var(--Primary-Container);
-  --color-surface-highest: var(--Surface-Highest);
+  --color-surface-highest: var(--surface-highest);
   --color-surface-medium: var(--Surface-Medium);
   --color-surface-low: var(--Surface-Low);
   --color-background: var(--Background);

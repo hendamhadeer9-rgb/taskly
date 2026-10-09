@@ -130,7 +130,7 @@ export function MobileEpicsInfiniteScroll({
       {/* الـ Modal الخاص بتفاصيل الـ Epic */}
       <EpicDetailsModal
         projectId={projectId}
-        epicId={selectedEpicId?? ""}
+        epicId={selectedEpicId ?? ""}
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);

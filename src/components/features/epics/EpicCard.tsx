@@ -51,7 +51,6 @@ export function EpicCard({
 
   return (
     <div className="mx-auto w-full max-w-4xl rounded-xl bg-white p-6 shadow-sm md:p-8">
-      {/* عرض أخطاء الـ API عند الفشل دون مسح البيانات */}
       {apiError && (
         <div className="mb-6 p-3 text-sm text-error">{apiError}</div>
       )}

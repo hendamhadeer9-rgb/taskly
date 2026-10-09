@@ -1,8 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Epic, getEpicDetails } from "@/api/services/servicesApi"; // أو حسب مسار ملف الـ types في مشروعك
+import { Epic, getEpicDetails } from "@/api/services/servicesApi";
 import { Button } from "@/components/ui/Button";
+import Plus from "@/../public/plus.svg";
+import Background from "@/../public/Background.svg";
+import Task from "@/../public/task.svg";
+import Copy from "@/../public/copy.svg";
+import Close from "@/../public/close.svg";
+import Cal from "@/../public/cal.svg";
+import Down from "@/../public/down.svg";
 
 interface EpicDetailsModalProps {
   projectId: string;
@@ -27,11 +34,9 @@ export function EpicDetailsModal({
     let isMounted = true;
     setLoading(true);
     setError(false);
-    setEpic(null); // تفريغ البيانات القديمة فوراً لمنع عرض بيانات Epic سابق أثناء التحميل
-
+    setEpic(null);
     async function fetchEpicDetails() {
       try {
-        // ✅ استدعاء الـ Server Action مباشرة بدلاً من fetch
         const result = await getEpicDetails(projectId, epicId);
 
         if (isMounted) {
@@ -57,11 +62,10 @@ export function EpicDetailsModal({
 
   if (!isOpen) return null;
 
-  // دالة تنسيق التاريخ ليكون بالشكل المقروء المطلوب: Dec 25, 2025
   const formatDate = (dateString?: string) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return "Oct 10, 2025";
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "N/A";
+    if (isNaN(date.getTime())) return "Oct 10, 2025";
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -69,166 +73,192 @@ export function EpicDetailsModal({
     });
   };
 
-  // استخراج أول حرف للـ Avatar في حال عدم وجود صورة
   const getInitial = (name?: string) => {
     return name ? name.charAt(0).toUpperCase() : "U";
   };
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[1px] p-4"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative shadow-xl"
-        onClick={(e) => e.stopPropagation()} // منع إغلاق النافذة عند الضغط بداخلها
+        className="bg-white rounded-2xl w-full max-w-155 max-h-[90vh] overflow-y-auto p-7 relative shadow-2xl border border-nav-border"
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* زر الإغلاق */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-full transition-colors"
-          aria-label="Close modal"
-        >
-          ✕
-        </button>
+        {/* Header Section with Copy Link & Close */}
+        <div className="flex items-center justify-between pb-3 text-medium-dark">
+          <div className="flex items-center gap-2 text-xs font-semibold text-nuetral-dark">
+            {/* Epic Icon */}
+            <Task />
+            <span className="uppercase text-neutral-dark tracking-wider">
+              {epic?.epic_id || "EPIC-101"}
+            </span>
+          </div>
 
-        {/* 1. حالة التحميل (Loading State) */}
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              className="flex items-center gap-1.5 text-xs text-medium-dark transition-colors font-medium"
+            >
+              <Copy />
+              Copy link
+            </button>
+            <button onClick={onClose} aria-label="Close modal">
+              <Close />
+            </button>
+          </div>
+        </div>
+
         {loading && (
-          <div className="py-16 flex flex-col items-center justify-center gap-3">
-            <span className="w-8 h-8 border-3 border-[#003D9B] border-t-transparent rounded-full animate-spin"></span>
-            <p className="text-slate-500 text-sm font-medium">
+          <div className="py-20 flex flex-col items-center justify-center gap-3">
+            <span className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></span>
+            <p className="text-medium-dark text-sm font-medium">
               Loading epic details...
             </p>
           </div>
         )}
 
-        {/* 2. حالة الخطأ (Error State) */}
         {!loading && error && (
           <div className="py-12 text-center">
-            <p className="text-red-500 font-semibold mb-4">
+            <p className="text-error font-semibold mb-4">
               Failed to load epic details.
             </p>
             <Button
               variant="secondary"
               onClick={onClose}
-              className="px-4 py-2 border border-slate-300 text-slate-700"
+              className="px-4 py-2 border border-nav-border text-neutral-dark rounded-lg"
             >
               Close
             </Button>
           </div>
         )}
 
-        {/* 3. عرض البيانات بعد النجاح (Success State) */}
         {epic && (
-          <div className="space-y-6">
-            {/* Epic Header & Title */}
-            <div>
-              <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">
-                {epic.epic_id}
-              </span>
-              <h2 className="text-xl font-bold text-slate-900 mt-2 ">
+          <div className="space-y-4 mt-2">
+            {/* Title Container */}
+            <div className="p-3.5 bg-surface-highest border border-nav-border rounded-xl">
+              <h2 className="text-base font-bold text-neutral-dark">
                 {epic.title}
               </h2>
             </div>
 
-            {/* Description */}
-            <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-                Description
-              </h4>
-              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap ">
+            {/* Description Container */}
+            <div className="p-4 bg-surface-highest border border-nav-border rounded-xl min-h-[100px]">
+              <p className="text-xs sm:text-sm text-neutral-dark leading-relaxed whitespace-pre-wrap">
                 {epic.description && epic.description.trim() !== ""
                   ? epic.description
-                  : "No description provided"}
+                  : "A comprehensive review and upgrade of the core architectural frameworks."}
               </p>
             </div>
 
-            {/* Creator, Assignee, Created At */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-y border-slate-100 py-4">
-              {/* Created By */}
+            {/* Details 2x2 Grid */}
+            <div className="grid grid-cols-2 gap-3 pt-1">
+              {/* ASSIGNEE */}
               <div>
-                <span className="text-xs text-slate-400 block mb-1">
-                  Created by
-                </span>
-                <div className="flex items-center gap-2">
-                  {epic.created_by?.avatar_url ? (
-                    <img
-                      src={epic.created_by.avatar_url}
-                      alt={epic.created_by.name}
-                      className="w-7 h-7 rounded-full object-cover shrink-0"
+                <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-dark/30 block mb-1">
+                  ASSIGNEE
+                </label>
+                <div className="flex items-center justify-between px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs">
+                  <div className="flex items-center gap-2 truncate">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-bold shrink-0">
+                      {getInitial(epic.assignee?.name || "John Doe")}
+                    </div>
+                    <span className="font-medium text-slate-800 truncate">
+                      {epic.assignee?.name || "John Doe"}
+                    </span>
+                  </div>
+                  <svg
+                    className="w-3.5 h-3.5 text-neutral-dark/30 shrink-0 ml-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 9l-7 7-7-7"
                     />
-                  ) : (
-                    <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-700 shrink-0">
+                  </svg>
+                </div>
+              </div>
+
+              {/* DEADLINE */}
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-dark/30 block mb-1">
+                  DEADLINE
+                </label>
+                <div className="flex items-center justify-between px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs">
+                  <div className="flex items-center gap-2 text-slate-700 truncate">
+                    <Cal />
+                    <span className="font-medium">
+                      {formatDate(epic.created_at)}
+                    </span>
+                  </div>
+                  <Down />
+                </div>
+              </div>
+
+              {/* CREATED BY */}
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-dark/30  block mb-1">
+                  CREATED BY
+                </label>
+                <div className="flex items-center px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs">
+                  <div className="flex items-center gap-2 truncate">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-bold shrink-0">
                       {getInitial(epic.created_by?.name)}
                     </div>
-                  )}
-                  <span className="text-sm font-medium text-slate-800 truncate">
-                    {epic.created_by?.name}
-                  </span>
-                </div>
-              </div>
-
-              {/* Assignee */}
-              <div>
-                <span className="text-xs text-slate-400 block mb-1">
-                  Assignee
-                </span>
-                <div className="flex items-center gap-2">
-                  {epic.assignee?.name ? (
-                    <>
-                      {epic.assignee.avatar_url ? (
-                        <img
-                          src={epic.assignee.avatar_url}
-                          alt={epic.assignee.name}
-                          className="w-7 h-7 rounded-full object-cover shrink-0"
-                        />
-                      ) : (
-                        <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0">
-                          {getInitial(epic.assignee.name)}
-                        </div>
-                      )}
-                      <span className="text-sm font-medium text-slate-800 truncate">
-                        {epic.assignee.name}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-sm font-medium text-slate-500">
-                      Unassigned
+                    <span className="font-medium text-slate-800 truncate">
+                      {epic.created_by?.name}
                     </span>
-                  )}
+                  </div>
                 </div>
               </div>
 
-              {/* Created At */}
+              {/* CREATED AT */}
               <div>
-                <span className="text-xs text-slate-400 block mb-1">
-                  Created at
-                </span>
-                <span className="text-sm font-medium text-slate-800">
-                  {formatDate(epic.created_at)}
-                </span>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-dark/30  block mb-1">
+                  CREATED AT
+                </label>
+                <div className="flex items-center px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs">
+                  <div className="flex items-center gap-2 text-slate-700 truncate">
+                    <Cal />
+                    <span className="font-medium">
+                      {formatDate(epic.created_at)}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Epic Tasks Section (Empty State) */}
-            <div className="pt-2">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-base font-bold text-slate-900">
-                  Epic Tasks
-                </h3>
-                <Button
-                  variant="primary"
-                  className="bg-[#003D9B] text-white text-xs px-3 py-1.5 opacity-80 cursor-not-allowed"
-                  disabled
+            {/* Epic Tasks Section */}
+            <div className="pt-3">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-sm font-bold text-neutral-dark">Tasks</h3>
+                <button
+                  type="button"
+                  className="text-xs font-semibold text-blue-700 hover:text-blue-800 flex items-center gap-1 transition-colors"
                 >
-                  + Add New Task
-                </Button>
+                  + Add Task
+                </button>
               </div>
 
-              <div className="bg-slate-50 border border-dashed border-slate-200 rounded-xl p-8 text-center">
-                <p className="text-sm text-slate-500 font-medium">
+              {/* Empty Tasks Box */}
+              <div className="bg-surface-low rounded-2xl p-6 text-center flex flex-col items-center justify-center gap-3">
+                <Background />
+
+                <p className="text-xs text-neutral-darl font-medium">
                   No tasks have been added to this epic yet
                 </p>
+                <Button
+                  variant="primary"
+                  className=" text-white text-xs px-4 py-2 h-auto font-medium rounded-lg flex items-center gap-1.5 "
+                  disabled
+                >
+                  <Plus /> Add Task
+                </Button>
               </div>
             </div>
           </div>

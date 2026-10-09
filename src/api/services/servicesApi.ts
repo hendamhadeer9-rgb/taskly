@@ -24,13 +24,12 @@ export interface CreateTaskPayload {
   status?: string;
 }
 
-
 export interface Epic {
   id: string;
   epic_id: string;
   title: string;
   description?: string;
-  deadline: string ;
+  deadline: string;
   created_at: string;
   created_by: UserInfo;
   assignee: UserInfo;
@@ -457,7 +456,6 @@ export async function getEpicDetails(projectId: string, epicId: string) {
     return { success: false, data: null };
   }
 }
-
 
 export async function addNewTask(data: CreateTaskPayload) {
   const cookieStore = await cookies();

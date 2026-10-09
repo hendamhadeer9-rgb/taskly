@@ -27,7 +27,7 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
 
   const userName = user?.user_metadata?.name || "User name";
 
-  const userRole = user?.user_metadata?.job_title ;
+  const userRole = user?.user_metadata?.job_title;
 
   const getAvatarLetters = (name: string) => {
     const parts = name.trim().split(/\s+/);
