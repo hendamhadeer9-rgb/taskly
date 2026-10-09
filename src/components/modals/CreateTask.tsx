@@ -9,7 +9,7 @@ import {
   Epic,
 } from "@/api/services/servicesApi";
 import { toast } from "sonner";
-import Down from "@/../public/Down.svg";
+import Down from "@/../public/down.svg";
 
 interface Member {
   user_id: string;

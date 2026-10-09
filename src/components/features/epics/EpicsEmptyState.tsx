@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import Epicempty from "@/../public/emptyepic.svg";
-import Light from "@/../public/Light.svg";
+import Light from "@/../public/light.svg";
 
 export function EpicsEmptyState({ projectId }: { projectId: string }) {
   return (
