@@ -1,7 +1,7 @@
 import React from "react";
 import { Epic } from "@/api/services/servicesApi";
 import Created from "@/../public/created.svg";
-import Cal from "@/../public/Cal.svg";
+import Cal from "@/../public/cal.svg";
 
 interface EpicCardProps {
   epic: Epic;
