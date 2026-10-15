@@ -13,7 +13,7 @@ export default async function TasksPage({ params }: TasksPageProps) {
   const project = await getProjectById(projectId);
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 max-w-[1600px] mx-auto min-h-screen flex flex-col gap-4 sm:gap-6">
+    <div className="p-4 sm:p-6 md:p-8 sm:max-w-312.5 max-w-97.5 mx-auto min-h-screen flex flex-col gap-4 sm:gap-6">
       {/* 1. Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -38,7 +38,7 @@ export default async function TasksPage({ params }: TasksPageProps) {
         </div>
 
         {/* Presentational Search Input */}
-        <div className="relative w-full md:w-72">
+        <div className="relative w-89.5 md:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"

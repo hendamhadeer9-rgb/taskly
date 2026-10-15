@@ -25,6 +25,7 @@ export function TaskBoard({ projectId }: TaskBoardProps) {
           {TASK_STATUSES.map((status) => (
             <TaskColumn
               key={status.id}
+              projectId={projectId}
               status={status}
               onAddTask={handleOpenModal}
             />

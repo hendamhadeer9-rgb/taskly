@@ -5,6 +5,7 @@ import { newEpicFormValues } from "@/app/project/[id]/epics/new/newEpicSchema";
 import { ProjectFormData } from "@/app/project/add/page";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { Task } from "@/components/features/tasks/tasksConfig";
 
 export interface UserInfo {
   sub: string;
@@ -494,5 +495,96 @@ export async function addNewTask(data: CreateTaskPayload) {
   } catch (error: any) {
     console.error("Fetch error creating task:", error);
     return { success: false, error: error.message || "Failed to create task" };
+  }
+}
+
+
+
+export async function updateEpic(epicId: string, updateData: Record<string, any>) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  try {
+    const response = await fetch(`${baseUrl}/rest/v1/epics?id=eq.${epicId}`, {
+      method: "PATCH",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateData),
+    });
+
+    if (!response.ok && response.status !== 204) {
+      throw new Error("Failed to update epic");
+    }
+    return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+
+
+
+export async function getTasksByStatus(
+  projectId: string,
+  apiStatusValue: string
+): Promise<Task[]> {
+ const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  // إرسال الـ Query Parameter بالتنسيق المطلوب: ?project_id=eq.123&status=eq.TO%20DO
+  const encodedStatus = encodeURIComponent(apiStatusValue);
+  const url = `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${encodedStatus}`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      apikey: apiKey,
+      Authorization: `Bearer ${token}`, // أو التوكن الخاص بالمستخدم المعرف
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    // اطبع تفاصيل الخطأ القادمة من الباك إند لمعرفة السبب الدقيق
+    const errorBody = await response.text();
+    console.error(`Error fetching status "${apiStatusValue}":`, errorBody);
+    
+    throw new Error(`Failed to fetch tasks for status: ${apiStatusValue}`);
+  }
+
+  const data: Task[] = await response.json();
+  return data;
+}
+
+
+export async function getEpicTasks(epicId: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  try {
+    const response = await fetch(
+      `${baseUrl}/rest/v1/project_tasks?epic_id=eq.${epicId}`,
+      {
+        method: "GET",
+        headers: {
+          apikey: apiKey,
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      return { success: false, data: [] };
+    }
+
+    const data = await response.json();
+    return { success: true, data: Array.isArray(data) ? data : [] };
+  } catch (error) {
+    console.error("Error fetching epic tasks:", error);
+    return { success: false, data: [] };
   }
 }
