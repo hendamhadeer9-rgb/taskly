@@ -275,7 +275,7 @@ export async function newEpic(projectId: string, data: newEpicFormValues) {
     return await response.json();
   } catch (error) {
     console.error("Error in newEpic execution:", error);
-    throw error; // 🛑 مهم جداً: إلقاء الخطأ حتى يعرف الـ UI إن العملية فشلت
+    throw error; 
   }
 }
 
@@ -532,7 +532,6 @@ export async function getTasksByStatus(
 ): Promise<Task[]> {
  const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
-  // إرسال الـ Query Parameter بالتنسيق المطلوب: ?project_id=eq.123&status=eq.TO%20DO
   const encodedStatus = encodeURIComponent(apiStatusValue);
   const url = `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${encodedStatus}`;
 
@@ -540,14 +539,13 @@ export async function getTasksByStatus(
     method: "GET",
     headers: {
       apikey: apiKey,
-      Authorization: `Bearer ${token}`, // أو التوكن الخاص بالمستخدم المعرف
+      Authorization: `Bearer ${token}`, 
       "Content-Type": "application/json",
     },
     cache: "no-store",
   });
 
   if (!response.ok) {
-    // اطبع تفاصيل الخطأ القادمة من الباك إند لمعرفة السبب الدقيق
     const errorBody = await response.text();
     console.error(`Error fetching status "${apiStatusValue}":`, errorBody);
     
@@ -588,3 +586,93 @@ export async function getEpicTasks(epicId: string) {
     return { success: false, data: [] };
   }
 }
+
+
+export async function getTaskDetails(projectId: string, taskId: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  try {
+    const response = await fetch(
+      `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&id=eq.${taskId}`,
+      {
+        method: "GET",
+        headers: {
+          apikey: apiKey,
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      return { success: false, data: null, error: "Failed to fetch task details" };
+    }
+
+    const data = await response.json();
+    return { success: true, data: Array.isArray(data) && data.length > 0 ? data[0] : null };
+  } catch (error: any) {
+    console.error("Error fetching task details:", error);
+    return { success: false, data: null, error: error.message || "Network error" };
+  }
+}
+
+
+// جلب المهام الخاصة بعمود معين مع الـ Pagination
+export async function getPaginatedTasksByStatus(
+  projectId: string,
+  apiStatusValue: string,
+  limit: number = 10,
+  offset: number = 0
+) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  const encodedStatus = encodeURIComponent(apiStatusValue);
+
+  try {
+    const response = await fetch( `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${encodedStatus}&limit=${limit}&offset=${offset}`,
+ {
+      method: "GET",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Prefer: "count=exact", // مطلوب جداً لجلب العدد الإجمالي
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return { success: false, data: [], totalCount: 0 };
+    }
+
+    const data = await response.json();
+    const contentRange =
+      response.headers.get("content-range") ||
+      response.headers.get("Content-Range");
+
+    let totalCount = 0;
+    if (contentRange) {
+      const parts = contentRange.split("/");
+      if (parts.length === 2 && parts[1].trim() !== "*") {
+        const parsed = parseInt(parts[1].trim(), 10);
+        if (!isNaN(parsed)) totalCount = parsed;
+      }
+    }
+
+    if (!totalCount) {
+      totalCount = Array.isArray(data) ? data.length : 0;
+    }
+
+    return {
+      success: true,
+      data: Array.isArray(data) ? data : [],
+      totalCount,
+    };
+  } catch (error) {
+    console.error("Error fetching paginated tasks by status:", error);
+    return { success: false, data: [], totalCount: 0 };
+  }
+}
+

@@ -1,39 +1,101 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { TaskStatusConfig } from "./tasksConfig";
+import { getPaginatedTasksByStatus } from "@/api/services/servicesApi";
 import { Task } from "@/components/features/tasks/tasksConfig";
-import { getTasksByStatus } from "@/api/services/servicesApi"; // أو الـ Server Action الخاص بك
-// import { TaskCard } from "./TaskCard"; // قم باستيراد كارت التاسك الخاص بك
 
 interface TaskColumnProps {
   projectId: string;
   status: TaskStatusConfig;
   onAddTask?: (statusId: string) => void;
+  onTaskClick?: (taskId: string) => void;
 }
 
-export function TaskColumn({ projectId, status, onAddTask }: TaskColumnProps) {
+export function TaskColumn({
+  projectId,
+  status,
+  onAddTask,
+  onTaskClick,
+}: TaskColumnProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFetchingMore, setIsFetchingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [offset, setOffset] = useState<number>(0);
+  const limit = 10;
 
-  const fetchTasks = useCallback(async () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // جلب الصفحة الأولى
+  const fetchInitialTasks = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    try {
-      // جلب المهام بناءً على الـ label أو الـ apiValue المطابق للـ backend
-      const data = await getTasksByStatus(projectId, status.label);
-      setTasks(data);
-    } catch (err: any) {
-      setError(err?.message);
-    } finally {
-      setIsLoading(false);
+    const result = await getPaginatedTasksByStatus(
+      projectId,
+      status.apiValue || status.id,
+      limit,
+      0
+    );
+
+    if (result.success) {
+      setTasks(result.data);
+      setOffset(result.data.length);
+      if (result.data.length >= result.totalCount || result.data.length < limit) {
+        setHasMore(false);
+      }
+    } else {
+      setError("Failed to load tasks");
     }
-  }, [projectId, status.label]);
+    setIsLoading(false);
+  }, [projectId, status.apiValue, status.id]);
 
   useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    fetchInitialTasks();
+  }, [fetchInitialTasks]);
+
+  // جلب المزيد عند التمرير (Load More)
+  const loadMoreTasks = async () => {
+    if (isFetchingMore || !hasMore) return;
+
+    setIsFetchingMore(true);
+    const result = await getPaginatedTasksByStatus(
+      projectId,
+      status.apiValue || status.id,
+      limit,
+      offset
+    );
+
+    if (result.success) {
+      setTasks((prev) => {
+        // منع تكرار التاسكات (Prevent Duplicates)
+        const existingIds = new Set(prev.map((t) => t.id));
+        const newTasks = result.data.filter((t) => !existingIds.has(t.id));
+        return [...prev, ...newTasks];
+      });
+
+      setOffset((prev) => prev + result.data.length);
+
+      if (
+        result.data.length < limit ||
+        tasks.length + result.data.length >= result.totalCount
+      ) {
+        setHasMore(false);
+      }
+    } else {
+      setError("Failed to load more tasks");
+    }
+    setIsFetchingMore(false);
+  };
+
+  // مراقبة التمرير داخل العمود
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+    if (scrollHeight - scrollTop <= clientHeight + 50 && !isFetchingMore && hasMore) {
+      loadMoreTasks();
+    }
+  };
 
   return (
     <div className="w-[280px] shrink-0 flex flex-col gap-3">
@@ -44,11 +106,11 @@ export function TaskColumn({ projectId, status, onAddTask }: TaskColumnProps) {
           {status.label}
         </span>
         <span className="text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-600 rounded">
-          {isLoading ? "..." : tasks.length}
+          {tasks.length}
         </span>
       </div>
 
-      {/* 2. Add New Task UI Button */}
+      {/* 2. Add New Task Button */}
       <button
         type="button"
         onClick={() => onAddTask?.(status.id)}
@@ -57,9 +119,13 @@ export function TaskColumn({ projectId, status, onAddTask }: TaskColumnProps) {
         <span>ADD NEW TASK</span>
       </button>
 
-      {/* 3. Content Container (Loading / Error / Empty / Success) */}
-      <div className="w-full min-h-[420px] bg-slate-50/70 rounded-xl border border-slate-100 flex flex-col p-3 gap-3 overflow-y-auto">
-        {/* Loading State (Skeleton) */}
+      {/* 3. Content Container with Scroll Listener */}
+      <div
+        ref={containerRef}
+        onScroll={handleScroll}
+        className="w-full h-[450px] bg-slate-50/70 rounded-xl border border-slate-100 flex flex-col p-3 gap-3 overflow-y-auto"
+      >
+        {/* Initial Loading */}
         {isLoading && (
           <div className="space-y-3 animate-pulse pt-2">
             {[1, 2].map((i) => (
@@ -68,12 +134,12 @@ export function TaskColumn({ projectId, status, onAddTask }: TaskColumnProps) {
           </div>
         )}
 
-        {/* Error State with Retry */}
+        {/* Error State */}
         {!isLoading && error && (
           <div className="my-auto p-4 bg-red-50 border border-red-200 rounded-lg text-center flex flex-col gap-2">
             <p className="text-xs text-red-600 font-medium">{error}</p>
             <button
-              onClick={fetchTasks}
+              onClick={fetchInitialTasks}
               className="text-xs font-semibold text-red-700 underline hover:text-red-800 cursor-pointer"
             >
               Retry
@@ -90,15 +156,13 @@ export function TaskColumn({ projectId, status, onAddTask }: TaskColumnProps) {
           </div>
         )}
 
-        {/* Success State (Task Cards) */}
+        {/* Task Cards */}
         {!isLoading &&
-          !error &&
-          tasks.length > 0 &&
           tasks.map((task) => (
-            // استبدل الـ div أدناه بـ <TaskCard task={task} /> الخاص بك
             <div
               key={task.id}
-              className="bg-white p-3.5 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-1.5"
+              onClick={() => onTaskClick?.(task.id)}
+              className="bg-white p-3.5 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-1.5 cursor-pointer hover:border-slate-300 transition-colors"
             >
               <h4 className="text-xs font-bold text-slate-700 line-clamp-2">
                 {task.title}
@@ -110,6 +174,13 @@ export function TaskColumn({ projectId, status, onAddTask }: TaskColumnProps) {
               )}
             </div>
           ))}
+
+        {/* Loading Indicator for More Tasks */}
+        {isFetchingMore && (
+          <div className="py-2 text-center">
+            <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin inline-block"></span>
+          </div>
+        )}
       </div>
     </div>
   );

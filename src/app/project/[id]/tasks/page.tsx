@@ -17,7 +17,6 @@ export default async function TasksPage({ params }: TasksPageProps) {
       {/* 1. Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          {/* Breadcrumbs - يُخفى في الموبايل ويظهر بدءاً من شاشات sm */}
           <div className="hidden sm:flex items-center gap-1.5 text-xs font-bold tracking-wider text-neutral-muted uppercase mb-2">
             <span>PROJECTS</span>
             <Right />
@@ -31,7 +30,6 @@ export default async function TasksPage({ params }: TasksPageProps) {
             Active Workboard
           </h1>
 
-          {/* Subtitle - يُخفى في الموبايل ويظهر بدءاً من شاشات sm */}
           <p className="hidden sm:block text-xs sm:text-sm text-neutral-muted mt-1">
             Curating Project Alpha's production pipeline and milestones.
           </p>

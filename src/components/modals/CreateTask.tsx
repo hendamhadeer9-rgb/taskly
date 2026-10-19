@@ -22,6 +22,7 @@ interface CreateTaskModalProps {
   onClose: () => void;
   projectId: string;
   defaultStatus?: string;
+  defaultEpicId?: string;
   preselectedEpicId?: string | null;
   onTaskCreated?: (newTask?: any) => void;
 }
@@ -31,6 +32,7 @@ export function CreateTask({
   onClose,
   projectId,
   defaultStatus = "TO_DO",
+  defaultEpicId ,
   preselectedEpicId = null,
   onTaskCreated,
 }: CreateTaskModalProps) {
@@ -130,7 +132,7 @@ export function CreateTask({
 
   return (
     <div
-      className="fixed inset-0 w-screen h-screen z-999 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4"
+      className="fixed inset-0 w-screen h-screen z-9999 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4"
       onClick={onClose}
     >
       <div
