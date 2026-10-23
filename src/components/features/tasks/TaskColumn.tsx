@@ -30,33 +30,29 @@ export function TaskColumn({
   const limit = 10;
 
   const containerRef = useRef<HTMLDivElement>(null);
-  // مرجع للاحتفاظ بآخر قيمة للـ searchTerm داخل دوال الـ scroll
   const currentSearchTermRef = useRef(searchTerm);
 
   useEffect(() => {
     currentSearchTermRef.current = searchTerm;
   }, [searchTerm]);
 
-  // جلب الصفحة الأولى عند تغيير المشروع، الحالة، أو نص البحث
   const fetchInitialTasks = useCallback(
     async (isSubscribed: () => boolean) => {
       setIsLoading(true);
       setError(null);
 
-      // إعادة تصفير مكان التمرير للأعلى مع كل بحث جديد
       if (containerRef.current) {
         containerRef.current.scrollTop = 0;
       }
 
       const result = await getPaginatedTasksByStatus(
         projectId,
-        status.apiValue || status.id,
+        status.apiValue ,
         limit,
         0,
         searchTerm
       );
 
-      // التأكد من أن هذا الطلب لا يزال هو الأحدث ولم يتم إرسال طلب جديد أثناء المعالجة
       if (!isSubscribed()) return;
 
       if (result.success) {
@@ -83,11 +79,10 @@ export function TaskColumn({
     fetchInitialTasks(() => isActive);
 
     return () => {
-      isActive = false; // إلغاء معالجة نتيجة أي طلب سابق
+      isActive = false; 
     };
   }, [fetchInitialTasks]);
 
-  // جلب المزيد عند التمرير (Load More)
   const loadMoreTasks = async () => {
     if (isFetchingMore || !hasMore) return;
 
@@ -96,13 +91,12 @@ export function TaskColumn({
 
     const result = await getPaginatedTasksByStatus(
       projectId,
-      status.apiValue || status.id,
+      status.apiValue ,
       limit,
       offset,
       activeSearch
     );
 
-    // التحقق من أن نص البحث لم يتغير أثناء انتظار رد الـ pagination
     if (activeSearch !== currentSearchTermRef.current) {
       setIsFetchingMore(false);
       return;
@@ -114,7 +108,6 @@ export function TaskColumn({
         const newTasks = result.data.filter((t) => !existingIds.has(t.id));
         const updatedList = [...prev, ...newTasks];
 
-        // تحديث حالة توقف التحميل استناداً إلى العدد الفعلي وإجمالي Content-Range
         if (
           result.data.length < limit ||
           updatedList.length >= result.totalCount
@@ -134,7 +127,6 @@ export function TaskColumn({
     setIsFetchingMore(false);
   };
 
-  // مراقبة التمرير داخل العمود
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
     if (scrollHeight - scrollTop <= clientHeight + 50 && !isFetchingMore && hasMore) {
@@ -150,7 +142,6 @@ export function TaskColumn({
         <span className="text-xs font-bold tracking-wider text-slate-600 uppercase">
           {status.label}
         </span>
-        {/* إجمالي المطابقات القادم من Content-Range */}
         <span className="text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-600 rounded">
           {isLoading ? "-" : totalCount}
         </span>

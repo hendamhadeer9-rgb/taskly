@@ -35,7 +35,6 @@ export default async function TasksPage({ params }: TasksPageProps) {
           </p>
         </div>
 
-        {/* التفاعل الحي للبحث */}
         <Suspense fallback={<div className="w-89.5 md:w-72 h-9 bg-slate-100 rounded-md animate-pulse" />}>
           <TaskSearchInput />
         </Suspense>

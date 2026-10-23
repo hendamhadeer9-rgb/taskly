@@ -691,7 +691,6 @@ export async function getPaginatedTasksByStatus(
 
 
 
-// 1. دالة إرسال الدعوة
 export async function inviteMember({ email, projectId }: InviteMemberParams) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
@@ -700,7 +699,6 @@ export async function inviteMember({ email, projectId }: InviteMemberParams) {
     return { success: false, error: "Unauthorized: Please log in." };
   }
 
-  // قراءة الـ Domain الحالي من الـ Environment Variables
   const appUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
   try {
@@ -724,7 +722,7 @@ export async function inviteMember({ email, projectId }: InviteMemberParams) {
       let message = "Failed to send invitation";
       try {
         const errorJson = JSON.parse(errorText);
-        message = errorJson.message || errorJson.hint || errorText;
+        message = errorJson.message ;
       } catch {
         message = errorText;
       }
@@ -738,7 +736,6 @@ export async function inviteMember({ email, projectId }: InviteMemberParams) {
   }
 }
 
-// 2. دالة قبول الدعوة
 export async function acceptInvitation(invitationToken: string) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
