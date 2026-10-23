@@ -7,6 +7,12 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { Task } from "@/components/features/tasks/tasksConfig";
 
+
+export interface InviteMemberParams {
+  email: string;
+  projectId: string;
+}
+
 export interface UserInfo {
   sub: string;
   name: string;
@@ -619,26 +625,32 @@ export async function getTaskDetails(projectId: string, taskId: string) {
 }
 
 
-// جلب المهام الخاصة بعمود معين مع الـ Pagination
 export async function getPaginatedTasksByStatus(
   projectId: string,
   apiStatusValue: string,
   limit: number = 10,
-  offset: number = 0
+  offset: number = 0,
+  search: string = ""
 ) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   const encodedStatus = encodeURIComponent(apiStatusValue);
 
   try {
-    const response = await fetch( `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${encodedStatus}&limit=${limit}&offset=${offset}`,
- {
+    const trimmedSearch = search.trim();
+    const searchQuery = trimmedSearch
+      ? `&title=ilike.*${encodeURIComponent(trimmedSearch)}*`
+      : "";
+
+    const url = `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${encodedStatus}&limit=${limit}&offset=${offset}${searchQuery}`;
+
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         apikey: apiKey,
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-        Prefer: "count=exact", // مطلوب جداً لجلب العدد الإجمالي
+        Prefer: "count=exact", 
       },
       cache: "no-store",
     });
@@ -648,6 +660,7 @@ export async function getPaginatedTasksByStatus(
     }
 
     const data = await response.json();
+
     const contentRange =
       response.headers.get("content-range") ||
       response.headers.get("Content-Range");
@@ -675,4 +688,99 @@ export async function getPaginatedTasksByStatus(
     return { success: false, data: [], totalCount: 0 };
   }
 }
+
+
+
+// 1. دالة إرسال الدعوة
+export async function inviteMember({ email, projectId }: InviteMemberParams) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) {
+    return { success: false, error: "Unauthorized: Please log in." };
+  }
+
+  // قراءة الـ Domain الحالي من الـ Environment Variables
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+  try {
+    const response = await fetch(`${baseUrl}/rest/v1/rpc/invite_member`, {
+      method: "POST",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        p_email: email.trim().toLowerCase(),
+        p_project_id: projectId,
+        p_app_url: appUrl,
+        p_base_url: baseUrl,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let message = "Failed to send invitation";
+      try {
+        const errorJson = JSON.parse(errorText);
+        message = errorJson.message || errorJson.hint || errorText;
+      } catch {
+        message = errorText;
+      }
+      return { success: false, error: message };
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error sending invite:", error);
+    return { success: false, error: error.message || "Network error" };
+  }
+}
+
+// 2. دالة قبول الدعوة
+export async function acceptInvitation(invitationToken: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) {
+    return { success: false, unauthorized: true, error: "Unauthorized" };
+  }
+
+  try {
+    const response = await fetch(`${baseUrl}/rest/v1/rpc/accept_invitation`, {
+      method: "POST",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        p_token: invitationToken,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMsg = "Something went wrong while accepting the invitation.";
+      try {
+        const parsed = JSON.parse(errorText);
+        errorMsg = parsed.message || parsed.hint || errorText;
+      } catch {
+        errorMsg = errorText;
+      }
+      return { success: false, error: errorMsg };
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error: any) {
+    console.error("Error accepting invitation:", error);
+    return {
+      success: false,
+      error: "Something went wrong while accepting the invitation. Please try again.",
+    };
+  }
+}
+
 

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { TaskBoard } from "@/components/features/tasks/TaskBoard";
-import Search from "@/../public/search.svg";
+import { TaskSearchInput } from "@/components/features/tasks/TaskSearchInput";
 import { getProjectById } from "@/api/services/servicesApi";
 import Right from "@/../public/right.svg";
 
@@ -31,25 +31,21 @@ export default async function TasksPage({ params }: TasksPageProps) {
           </h1>
 
           <p className="hidden sm:block text-xs sm:text-sm text-neutral-muted mt-1">
-            Curating Project Alpha's production pipeline and milestones.
+            Curating {project?.name || "Project"}'s production pipeline and milestones.
           </p>
         </div>
 
-        {/* Presentational Search Input */}
-        <div className="relative w-89.5 md:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            readOnly
-            placeholder="Search tasks..."
-            className="w-full pl-9 pr-3 py-2 text-sm bg-primary-container/20 rounded-md focus:outline-none cursor-default text-medium-dark placeholder:text-medium-dark"
-          />
-        </div>
+        {/* التفاعل الحي للبحث */}
+        <Suspense fallback={<div className="w-89.5 md:w-72 h-9 bg-slate-100 rounded-md animate-pulse" />}>
+          <TaskSearchInput />
+        </Suspense>
       </div>
 
-      {/* 2. Empty State Kanban Board */}
+      {/* 2. Kanban Board */}
       <div className="mt-2">
-        <TaskBoard projectId={projectId} />
+        <Suspense fallback={null}>
+          <TaskBoard projectId={projectId} />
+        </Suspense>
       </div>
     </div>
   );

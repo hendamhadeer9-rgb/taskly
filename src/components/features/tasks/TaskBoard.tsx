@@ -1,20 +1,23 @@
 "use client";
 
 import React, { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { TASK_STATUSES } from "./tasksConfig";
 import { TaskColumn } from "./TaskColumn";
 import { CreateTask } from "../../modals/CreateTask";
-import { TaskDetailsModal } from "../../modals/TaskDetailsModal"; // تأكدي من المسار الصحيح للمكون
+import { TaskDetailsModal } from "../../modals/TaskDetailsModal"; 
 
 interface TaskBoardProps {
   projectId: string;
 }
 
 export function TaskBoard({ projectId }: TaskBoardProps) {
+  const searchParams = useSearchParams();
+  const searchTerm = searchParams.get("search") || "";
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("TO_DO");
 
-  // حالات فتح Task Details Modal
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
 
@@ -37,14 +40,14 @@ export function TaskBoard({ projectId }: TaskBoardProps) {
               key={status.id}
               projectId={projectId}
               status={status}
+              searchTerm={searchTerm}
               onAddTask={handleOpenModal}
-              onTaskClick={handleTaskClick} // ربط كليك الكارد
+              onTaskClick={handleTaskClick}
             />
           ))}
         </div>
       </div>
 
-      {/* Modal إضافة مهمة */}
       <CreateTask
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -52,7 +55,6 @@ export function TaskBoard({ projectId }: TaskBoardProps) {
         defaultStatus={selectedStatus}
       />
 
-      {/* Modal عرض تفاصيل المهمة */}
       <TaskDetailsModal
         isOpen={isDetailsOpen}
         onClose={() => {

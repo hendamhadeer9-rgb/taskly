@@ -8,6 +8,7 @@ import { Task } from "@/components/features/tasks/tasksConfig";
 interface TaskColumnProps {
   projectId: string;
   status: TaskStatusConfig;
+  searchTerm?: string;
   onAddTask?: (statusId: string) => void;
   onTaskClick?: (taskId: string) => void;
 }
@@ -15,10 +16,12 @@ interface TaskColumnProps {
 export function TaskColumn({
   projectId,
   status,
+  searchTerm = "",
   onAddTask,
   onTaskClick,
 }: TaskColumnProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFetchingMore, setIsFetchingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,32 +30,61 @@ export function TaskColumn({
   const limit = 10;
 
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // جلب الصفحة الأولى
-  const fetchInitialTasks = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    const result = await getPaginatedTasksByStatus(
-      projectId,
-      status.apiValue || status.id,
-      limit,
-      0
-    );
-
-    if (result.success) {
-      setTasks(result.data);
-      setOffset(result.data.length);
-      if (result.data.length >= result.totalCount || result.data.length < limit) {
-        setHasMore(false);
-      }
-    } else {
-      setError("Failed to load tasks");
-    }
-    setIsLoading(false);
-  }, [projectId, status.apiValue, status.id]);
+  // مرجع للاحتفاظ بآخر قيمة للـ searchTerm داخل دوال الـ scroll
+  const currentSearchTermRef = useRef(searchTerm);
 
   useEffect(() => {
-    fetchInitialTasks();
+    currentSearchTermRef.current = searchTerm;
+  }, [searchTerm]);
+
+  // جلب الصفحة الأولى عند تغيير المشروع، الحالة، أو نص البحث
+  const fetchInitialTasks = useCallback(
+    async (isSubscribed: () => boolean) => {
+      setIsLoading(true);
+      setError(null);
+
+      // إعادة تصفير مكان التمرير للأعلى مع كل بحث جديد
+      if (containerRef.current) {
+        containerRef.current.scrollTop = 0;
+      }
+
+      const result = await getPaginatedTasksByStatus(
+        projectId,
+        status.apiValue || status.id,
+        limit,
+        0,
+        searchTerm
+      );
+
+      // التأكد من أن هذا الطلب لا يزال هو الأحدث ولم يتم إرسال طلب جديد أثناء المعالجة
+      if (!isSubscribed()) return;
+
+      if (result.success) {
+        setTasks(result.data);
+        setTotalCount(result.totalCount);
+        setOffset(result.data.length);
+
+        if (result.data.length >= result.totalCount || result.data.length < limit) {
+          setHasMore(false);
+        } else {
+          setHasMore(true);
+        }
+      } else {
+        setError("Failed to load tasks");
+      }
+      setIsLoading(false);
+    },
+    [projectId, status.apiValue, status.id, searchTerm]
+  );
+
+  useEffect(() => {
+    let isActive = true;
+
+    fetchInitialTasks(() => isActive);
+
+    return () => {
+      isActive = false; // إلغاء معالجة نتيجة أي طلب سابق
+    };
   }, [fetchInitialTasks]);
 
   // جلب المزيد عند التمرير (Load More)
@@ -60,32 +92,45 @@ export function TaskColumn({
     if (isFetchingMore || !hasMore) return;
 
     setIsFetchingMore(true);
+    const activeSearch = currentSearchTermRef.current;
+
     const result = await getPaginatedTasksByStatus(
       projectId,
       status.apiValue || status.id,
       limit,
-      offset
+      offset,
+      activeSearch
     );
+
+    // التحقق من أن نص البحث لم يتغير أثناء انتظار رد الـ pagination
+    if (activeSearch !== currentSearchTermRef.current) {
+      setIsFetchingMore(false);
+      return;
+    }
 
     if (result.success) {
       setTasks((prev) => {
-        // منع تكرار التاسكات (Prevent Duplicates)
         const existingIds = new Set(prev.map((t) => t.id));
         const newTasks = result.data.filter((t) => !existingIds.has(t.id));
-        return [...prev, ...newTasks];
+        const updatedList = [...prev, ...newTasks];
+
+        // تحديث حالة توقف التحميل استناداً إلى العدد الفعلي وإجمالي Content-Range
+        if (
+          result.data.length < limit ||
+          updatedList.length >= result.totalCount
+        ) {
+          setHasMore(false);
+        }
+
+        return updatedList;
       });
 
+      setTotalCount(result.totalCount);
       setOffset((prev) => prev + result.data.length);
-
-      if (
-        result.data.length < limit ||
-        tasks.length + result.data.length >= result.totalCount
-      ) {
-        setHasMore(false);
-      }
     } else {
       setError("Failed to load more tasks");
     }
+
     setIsFetchingMore(false);
   };
 
@@ -105,8 +150,9 @@ export function TaskColumn({
         <span className="text-xs font-bold tracking-wider text-slate-600 uppercase">
           {status.label}
         </span>
+        {/* إجمالي المطابقات القادم من Content-Range */}
         <span className="text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-600 rounded">
-          {tasks.length}
+          {isLoading ? "-" : totalCount}
         </span>
       </div>
 
@@ -139,7 +185,10 @@ export function TaskColumn({
           <div className="my-auto p-4 bg-red-50 border border-red-200 rounded-lg text-center flex flex-col gap-2">
             <p className="text-xs text-red-600 font-medium">{error}</p>
             <button
-              onClick={fetchInitialTasks}
+              onClick={() => {
+                let active = true;
+                fetchInitialTasks(() => active);
+              }}
               className="text-xs font-semibold text-red-700 underline hover:text-red-800 cursor-pointer"
             >
               Retry
@@ -149,10 +198,15 @@ export function TaskColumn({
 
         {/* Empty State */}
         {!isLoading && !error && tasks.length === 0 && (
-          <div className="my-auto flex flex-col items-center justify-center p-6 text-slate-300">
+          <div className="my-auto flex flex-col items-center justify-center p-6 text-center text-slate-300">
             <span className="text-xs font-bold tracking-wider text-slate-400 uppercase">
-              NO TASKS
+              {searchTerm.trim() ? "NO MATCHING TASKS" : "NO TASKS"}
             </span>
+            {searchTerm.trim() && (
+              <span className="text-[11px] text-slate-400 mt-1">
+                No tasks match "{searchTerm.trim()}"
+              </span>
+            )}
           </div>
         )}
 

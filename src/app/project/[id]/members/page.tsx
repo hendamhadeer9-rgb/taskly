@@ -10,6 +10,7 @@ import MemberListTable, {
   Member,
 } from "@/components/features/members/MemberListTable";
 import { ProjectsErrorState } from "@/components/features/projects/ProjectsErrorState";
+import InviteMemberModal from "@/components/features/members/InviteMemberModal";
 
 interface PageProps {
   params: Promise<{
@@ -25,6 +26,7 @@ export default function Page({ params }: PageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [projectName, setProjectName] = useState<string>("");
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
 
   const fetchMembers = async () => {
     if (!projectId) return;
@@ -41,7 +43,9 @@ export default function Page({ params }: PageProps) {
         return;
       }
       setMembers(data);
-      setProjectName(project.name);
+      if (project?.name) {
+        setProjectName(project.name);
+      }
     } catch (err) {
       console.error("Failed to fetch members:", err);
       setError(true);
@@ -71,18 +75,18 @@ export default function Page({ params }: PageProps) {
     <div className="min-h-screen bg-Surface-Low p-6 md:p-10 space-y-6 max-w-300 mx-auto">
       {/* Breadcrumbs */}
       <nav className="hidden sm:flex items-center gap-2 text-xs font-bold text-neutral-muted/60">
-        <Link href="/project" className=" uppercase tracking-wider">
+        <Link href="/project" className="uppercase tracking-wider">
           Projects
         </Link>
         <span>/</span>
         <Link
           href={`/project/${projectId}`}
-          className=" uppercase tracking-wider"
+          className="uppercase tracking-wider"
         >
-          {projectName}
+          {projectName || "Project"}
         </Link>
         <span>/</span>
-        <span className=" font-medium uppercase text-primary tracking-wider">
+        <span className="font-medium uppercase text-primary tracking-wider">
           Members
         </span>
       </nav>
@@ -91,13 +95,14 @@ export default function Page({ params }: PageProps) {
       <div className="flex items-center justify-between">
         <Typography
           variant="headline-lg"
-          className="font-semibold text-neutral-dark "
+          className="font-semibold text-neutral-dark"
         >
           Project Members
         </Typography>
 
         <Button
           variant="primary"
+          onClick={() => setIsInviteOpen(true)}
           className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-sm text-body-md text-white font-bold"
         >
           <Invite className="w-5 h-4" /> Invite Members
@@ -105,23 +110,36 @@ export default function Page({ params }: PageProps) {
       </div>
 
       {/* Main Members Card / Table Container */}
-      <div className=" rounded-lg shadow-sm overflow-hidden w-full sm:w-xl mx-auto sm:my-15">
+      <div className="rounded-lg shadow-sm overflow-hidden w-full sm:w-xl mx-auto sm:my-15">
         {/* Table Header */}
         <div className="bg-surface-low grid grid-cols-12 px-6 py-3 border-b border-nav-border text-label-sm font-bold text-neutral-muted uppercase tracking-wider">
-          <div className="col-span-8 ">Member</div>
-          <div className="col-span-4 text-right pr-2 ">Role</div>
+          <div className="col-span-8">Member</div>
+          <div className="col-span-4 text-right pr-2">Role</div>
         </div>
 
         {/* Members List Component */}
         <MemberListTable members={members} />
       </div>
 
+      {/* Mobile Floating Action Button */}
       <Button
         variant="primary"
+        onClick={() => setIsInviteOpen(true)}
         className="flex ml-auto sm:hidden items-center justify-center w-10 h-10 rounded-lg text-white"
       >
         <Invite />
       </Button>
+
+      {/* Invite Member Modal */}
+      <InviteMemberModal
+        projectId={projectId}
+        projectName={projectName}
+        isOpen={isInviteOpen}
+        onClose={() => setIsInviteOpen(false)}
+        onSuccess={() => {
+          fetchMembers();
+        }}
+      />
     </div>
   );
 }
