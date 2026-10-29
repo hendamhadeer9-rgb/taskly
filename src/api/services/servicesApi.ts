@@ -46,6 +46,29 @@ export interface FetchProjectsResponse {
   data: any[];
   totalCount: number;
 }
+
+export interface CalendarStatsPayload {
+  p_start_date: string;         
+  p_end_date: string;           
+  p_project_id?: string | null; 
+  p_status?: string | null;     
+}
+export interface DailyStat {
+  day: string; 
+  statuses: Record<string, number>;
+}
+export interface CalendarStatsResponse {
+  daily: DailyStat[];
+  totals: Record<string, number>;
+  total_tasks: number;
+  done_tasks: number;
+  overdue_tasks: number;
+}
+export interface ProjectTaskCount {
+  project_id: string;
+  project_name: string;
+  tasks_count: number;
+}
 const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const apiKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
 
@@ -781,3 +804,71 @@ export async function acceptInvitation(invitationToken: string) {
 }
 
 
+export async function getTasksCalendarStats(
+  payload: CalendarStatsPayload
+): Promise<{ success: boolean; data: CalendarStatsResponse | null; error?: string }> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  try {
+    const response = await fetch(`${baseUrl}/rest/v1/rpc/get_tasks_calendar_stats`, {
+      method: "POST",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+      body: JSON.stringify({
+        p_start_date: payload.p_start_date,
+        p_end_date: payload.p_end_date,
+        p_project_id: payload.p_project_id || null,
+        p_status: payload.p_status || null,
+      }),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Supabase Error (get_tasks_calendar_stats):", errorText);
+      return { success: false, data: null, error: errorText || "Failed to fetch calendar stats" };
+    }
+    const data: CalendarStatsResponse = await response.json();
+    return { success: true, data };
+  } catch (error: any) {
+    console.error("Error fetching calendar stats:", error);
+    return { success: false, data: null, error: error.message || "Network error" };
+  }
+}
+/**
+ * 2. جلب عدد المهام لكل مشروع بناءً على نطاق التاريخ
+ */
+export async function getTasksCountPerProject(
+  startDate: string,
+  endDate: string
+): Promise<{ success: boolean; data: ProjectTaskCount[]; error?: string }> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  try {
+    const response = await fetch(`${baseUrl}/rest/v1/rpc/get_tasks_count_per_project`, {
+      method: "POST",
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+      body: JSON.stringify({
+        p_start_date: startDate,
+        p_end_date: endDate,
+      }),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Supabase Error (get_tasks_count_per_project):", errorText);
+      return { success: false, data: [], error: errorText || "Failed to fetch projects count" };
+    }
+    const data: ProjectTaskCount[] = await response.json();
+    return { success: true, data: Array.isArray(data) ? data : [] };
+  } catch (error: any) {
+    console.error("Error fetching projects task count:", error);
+    return { success: false, data: [], error: error.message || "Network error" };
+  }
+}

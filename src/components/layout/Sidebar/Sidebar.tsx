@@ -75,7 +75,7 @@ export default function Sidebar({
     {
       label: "My Statistics",
       icon: <Statistics className="w-5 h-5 shrink-0" />,
-      href: "/statistics",
+      href: "/my-statistics",
     },
   ];
 
