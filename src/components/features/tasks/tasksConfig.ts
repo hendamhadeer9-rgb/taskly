@@ -13,10 +13,12 @@ export interface Task {
   project_id: string;
   created_at?: string;
   priority?: string;
+  due_date?: string | null;
   assignee?: {
     name?: string;
     avatar_url?: string;
-  };
+    email?: string;
+  } | any;
 }
 
 export const TASK_STATUSES: TaskStatusConfig[] = [

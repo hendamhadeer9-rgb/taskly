@@ -184,7 +184,7 @@ export default function SignupForm() {
             <div className="p-4 rounded-lg bg-condition-box space-y-2">
               {rules.map((rule) => (
                 <div key={rule.id} className="flex items-center gap-2">
-                  <div>{rule.isMet ? <Circle /> : <Check_circle />}</div>
+                  <div>{rule.isMet ? <Check_circle /> : <Circle />}</div>
 
                   <Typography
                     variant="label-sm"
